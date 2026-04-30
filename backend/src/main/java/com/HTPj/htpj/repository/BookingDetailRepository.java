@@ -45,4 +45,13 @@ public interface BookingDetailRepository extends JpaRepository<BookingDetail, Lo
             @Param("checkOut") LocalDate checkOut,
             @Param("statuses") List<String> statuses
     );
+
+    @Query("""
+    SELECT COUNT(bd) 
+    FROM BookingDetail bd
+    JOIN bd.booking b
+    WHERE bd.roomType.roomTypeId = :roomTypeId
+    AND b.bookingStatus = 'BOOKED'
+""")
+    long countActiveBookingByRoomType(@Param("roomTypeId") Integer roomTypeId);
 }

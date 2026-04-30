@@ -110,7 +110,7 @@ const UserGuidePage = () => {
                 "Upload hình ảnh chất lượng cao (Phòng, Tiện ích, View)",
                 "Mô tả chi tiết các loại phòng và chính sách trẻ em",
                 "Cập nhật danh mục tiện nghi (Bể bơi, Gym, Spa...)",
-                "Thiết lập vị trí bản đồ chính xác"
+
             ]
         },
         {

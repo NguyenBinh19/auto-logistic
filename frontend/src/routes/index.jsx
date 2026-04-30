@@ -196,11 +196,11 @@ const AppRoutes = () => {
 
                 {/*Luồng Admin System*/}
                 <Route path="/admin"
-                    element={
-                        <ProtectedRoute roles={["ROLE_ADMIN", "ROLE_ADMIN_STAFF"]}>
-                            <AdminLayout />
-                        </ProtectedRoute>
-                    }>
+                       element={
+                           <ProtectedRoute roles={["ROLE_ADMIN", "ROLE_ADMIN_STAFF"]}>
+                               <AdminLayout />
+                           </ProtectedRoute>
+                       }>
                     <Route path="dashboard" element={<AdminDashboardPage />} />
                     <Route path="kyc-queue" element={<KYCQueuePage />} />
                     <Route path="view-booking" element={<ViewAllBooking />} />

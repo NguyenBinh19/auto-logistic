@@ -1,13 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Loader2, Save, Sparkles, Upload, Trash2 } from "lucide-react";
+import { X, Loader2, Save, Sparkles, Upload, Trash2, Plus, Check } from "lucide-react";
 import { roomTypeService } from "@/services/roomtypes.service.js";
 
-const AMENITY_GROUPS = {
-    "Phòng tắm": ["Bồn tắm", "Máy sấy", "Áo choàng", "Dép đi trong phòng", "Vòi sen đứng"],
-    "Công nghệ": ["Smart TV", "Wifi tốc độ cao", "Loa Bluetooth", "Điện thoại nội bộ", "Két sắt điện tử"],
-    "View": ["Hướng biển", "Hướng thành phố", "Hướng vườn", "Ban công", "Cửa sổ lớn"]
-};
-
+const SUGGESTED_AMENITIES = ["Wifi tốc độ cao", "Smart TV", "Bồn tắm", "Máy sấy", "Loa Bluetooth", "Ban công", "Hướng biển", "Hướng phố"];
 const InputField = ({ label, name, value, onChange, type = "text", placeholder, className = "", ...props }) => (
     <div className={`space-y-1.5 ${className}`}>
         <label className="text-sm font-semibold text-slate-700 block">{label}</label>
@@ -28,6 +23,7 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const [tagInput, setTagInput] = useState("");
 
     const [form, setForm] = useState({
         roomTitle: "", description: "", basePrice: 0,
@@ -75,6 +71,34 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
         } finally {
             setIsLoadingData(false);
         }
+    };
+
+    const handleAddTag = (e) => {
+        if (e && e.key && e.key !== 'Enter') return;
+        if (e) e.preventDefault();
+        const val = tagInput.trim();
+        if (val) {
+            if (!form.amenities.includes(val)) {
+                setForm(prev => ({ ...prev, amenities: [...prev.amenities, val] }));
+                setTagInput("");
+            } else {
+                setTagInput("");
+            }
+        }
+    };
+
+    const removeTag = (tagToRemove) => {
+        setForm(prev => ({ ...prev, amenities: prev.amenities.filter(tag => tag !== tagToRemove) }));
+    };
+
+    const toggleSuggestedAmenity = (amenity) => {
+        setForm(prev => {
+            const exists = prev.amenities.includes(amenity);
+            return {
+                ...prev,
+                amenities: exists ? prev.amenities.filter(a => a !== amenity) : [...prev.amenities, amenity]
+            };
+        });
     };
 
     const handleFileSelect = (e) => {
@@ -180,11 +204,16 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                             <section>
                                 <h3 className="text-sm font-bold text-slate-900 mb-4">Thông tin cơ bản</h3>
                                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                                    <InputField label="Tên hạng phòng" name="roomTitle" value={form.roomTitle} onChange={handleChange} />
-                                    <InputField label="Số lượng phòng" name="totalRooms" type="number" value={form.totalRooms} onChange={handleChange} />
-                                    <InputField label="Sức chứa người lớn" name="maxAdults" type="number" value={form.maxAdults} onChange={handleChange} />
-                                    <InputField label="Sức chứa trẻ em" name="maxChildren" type="number" value={form.maxChildren} onChange={handleChange} />
-                                    <InputField label="Kích thước (m²)" name="roomArea" type="number" value={form.roomArea} onChange={handleChange} />
+                                    <InputField label="Tên hạng phòng" name="roomTitle" value={form.roomTitle}
+                                                onChange={handleChange}/>
+                                    <InputField label="Số lượng phòng" name="totalRooms" type="number"
+                                                value={form.totalRooms} onChange={handleChange}/>
+                                    <InputField label="Sức chứa người lớn" name="maxAdults" type="number"
+                                                value={form.maxAdults} onChange={handleChange}/>
+                                    <InputField label="Sức chứa trẻ em" name="maxChildren" type="number"
+                                                value={form.maxChildren} onChange={handleChange}/>
+                                    <InputField label="Kích thước (m²)" name="roomArea" type="number"
+                                                value={form.roomArea} onChange={handleChange}/>
                                     <InputField
                                         label="Loại giường"
                                         name="bedType"
@@ -192,68 +221,104 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                                         onChange={handleChange}
                                         placeholder="Ví dụ: 1 giường King, 2 giường đơn..."
                                     />
-                                    <InputField label="Giá gốc (VNĐ/Đêm)" name="basePrice" type="number" value={form.basePrice} onChange={handleChange} className="col-span-2" />
+                                    <InputField label="Giá gốc (VNĐ/Đêm)" name="basePrice" type="number"
+                                                value={form.basePrice} onChange={handleChange} className="col-span-2"/>
                                 </div>
                             </section>
 
                             {/* TIỆN ÍCH */}
                             <section>
-                                <h3 className="text-sm font-bold text-slate-900 mb-4">Tiện ích</h3>
-                                <div className="grid grid-cols-3 gap-4">
-                                    {Object.entries(AMENITY_GROUPS).map(([group, items]) => (
-                                        <div key={group} className="p-4 bg-slate-50/50 rounded-xl border border-slate-100">
-                                            <h4 className="text-[11px] font-bold text-slate-400 uppercase mb-3 tracking-widest">{group}</h4>
-                                            <div className="space-y-2">
-                                                {items.map(item => (
-                                                    <label key={`${group}-${item}`} className="flex items-center gap-2.5 cursor-pointer group">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={form.amenities.includes(item)}
-                                                            onChange={() => handleAmenityChange(item)}
-                                                            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
-                                                        />
-                                                        <span className="text-sm text-slate-600 group-hover:text-slate-900">{item}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
+                                <h3 className="text-sm font-bold text-slate-900 mb-3">Tiện ích</h3>
+                                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                    {/* Danh sách Tags đã chọn */}
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        {form.amenities.map((tag, index) => (
+                                            <span key={index}
+                                                  className="flex items-center gap-1 px-3 py-1 bg-white border border-blue-200 text-blue-700 rounded-full text-xs font-semibold shadow-sm animate-in fade-in zoom-in duration-200">
+                                                {tag}
+                                                <X size={12} className="cursor-pointer hover:text-red-500"
+                                                   onClick={() => removeTag(tag)}/>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    {/* Input thêm nhanh */}
+                                    <div className="relative mb-4">
+                                        <input
+                                            type="text"
+                                            value={tagInput}
+                                            onChange={(e) => setTagInput(e.target.value)}
+                                            onKeyDown={handleAddTag}
+                                            placeholder="Thêm tiện ích (nhấn Enter để thêm)..."
+                                            className="w-full pl-3 pr-10 py-2 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-blue-400"
+                                        />
+                                        <button type="button" onClick={() => handleAddTag()}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-blue-500">
+                                            <Plus size={16}/>
+                                        </button>
+                                    </div>
+                                    {/* Gợi ý tiện ích dạng phẳng */}
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                        {SUGGESTED_AMENITIES.map(item => {
+                                            const isSelected = form.amenities.includes(item);
+                                            return (
+                                                <div key={item} onClick={() => toggleSuggestedAmenity(item)}
+                                                     className={`cursor-pointer text-xs px-3 py-2 rounded border transition-all flex items-center gap-2 ${isSelected ? 'bg-blue-50 border-blue-200 text-blue-700 font-medium' : 'bg-white border-slate-100 text-slate-600'}`}>
+                                                    <div
+                                                        className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center ${isSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-300'}`}>
+                                                        {isSelected && <Check size={10} className="text-white"/>}
+                                                    </div>
+                                                    {item}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
                                 </div>
                             </section>
 
                             {/* THƯ VIỆN ẢNH */}
                             <section>
-                                <h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Thư viện ảnh</h3>
+                                <h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Thư viện
+                                    ảnh</h3>
                                 <div
                                     onClick={() => fileInputRef.current?.click()}
                                     className="border-2 border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center bg-slate-50/50 hover:bg-slate-50 hover:border-blue-400 transition-all cursor-pointer"
                                 >
-                                    <Upload className="text-slate-400 mb-2" size={24} />
+                                    <Upload className="text-slate-400 mb-2" size={24}/>
                                     <p className="text-sm font-medium text-slate-600">Thêm ảnh mới cho hạng phòng</p>
-                                    <input type="file" multiple accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileSelect} />
+                                    <input type="file" multiple accept="image/*" className="hidden" ref={fileInputRef}
+                                           onChange={handleFileSelect}/>
                                 </div>
 
                                 <div className="grid grid-cols-4 gap-4 mt-6">
                                     {existingImages.map((img) => (
-                                        <div key={`existing-${img.imageId || img.id}`} className="relative aspect-video rounded-lg overflow-hidden group border border-slate-200">
-                                            <img src={img.imageUrl} className="w-full h-full object-cover" alt="existing" />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                <button onClick={() => removeExistingImage(img.imageId || img.id)} className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
-                                                    <Trash2 size={14} />
+                                        <div key={`existing-${img.imageId || img.id}`}
+                                             className="relative aspect-video rounded-lg overflow-hidden group border border-slate-200">
+                                            <img src={img.imageUrl} className="w-full h-full object-cover"
+                                                 alt="existing"/>
+                                            <div
+                                                className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                <button onClick={() => removeExistingImage(img.imageId || img.id)}
+                                                        className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
+                                                    <Trash2 size={14}/>
                                                 </button>
                                             </div>
                                         </div>
                                     ))}
 
                                     {newFiles.map((f, idx) => (
-                                        <div key={`new-${f.preview}`} className="relative aspect-video rounded-lg overflow-hidden group border-2 border-blue-400">
-                                            <img src={f.preview} className="w-full h-full object-cover" alt="new" />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                <button onClick={() => removeNewFile(idx)} className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
-                                                    <Trash2 size={14} />
+                                        <div key={`new-${f.preview}`}
+                                             className="relative aspect-video rounded-lg overflow-hidden group border-2 border-blue-400">
+                                            <img src={f.preview} className="w-full h-full object-cover" alt="new"/>
+                                            <div
+                                                className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                                <button onClick={() => removeNewFile(idx)}
+                                                        className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg">
+                                                    <Trash2 size={14}/>
                                                 </button>
                                             </div>
-                                            <div className="absolute top-1 right-1 bg-blue-600 text-[9px] text-white px-1.5 py-0.5 rounded font-bold uppercase">Mới</div>
+                                            <div
+                                                className="absolute top-1 right-1 bg-blue-600 text-[9px] text-white px-1.5 py-0.5 rounded font-bold uppercase">Mới
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -263,13 +328,16 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                 </div>
 
                 <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-white rounded-b-xl">
-                    <button onClick={handleClose} className="px-5 py-2 rounded-lg bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 text-sm">Hủy bỏ</button>
+                    <button onClick={handleClose}
+                            className="px-5 py-2 rounded-lg bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 text-sm">Hủy
+                        bỏ
+                    </button>
                     <button
                         onClick={handleUpdate}
                         disabled={isSaving || isLoadingData}
                         className="px-6 py-2 rounded-lg bg-[#0066FF] hover:bg-blue-700 text-white font-semibold text-sm flex items-center gap-2 shadow-sm disabled:opacity-50"
                     >
-                        {isSaving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                        {isSaving ? <Loader2 className="animate-spin" size={16}/> : <Save size={16}/>}
                         Lưu thay đổi
                     </button>
                 </div>

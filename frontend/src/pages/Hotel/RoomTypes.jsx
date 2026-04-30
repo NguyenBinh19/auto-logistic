@@ -78,7 +78,6 @@ const ManageRoomTypes = () => {
     }, [searchTerm]);
 
     // --- HANDLERS ---
-
     const handleAddNew = () => {
         setShowAddModal(true);
     };
@@ -88,39 +87,31 @@ const ManageRoomTypes = () => {
     };
 
     const handleDelete = async (id) => {
-        // Nội dung cảnh báo chi tiết
-        const warningMessage =
-            `⚠️ CẢNH BÁO QUAN TRỌNG:
-
-1. Bạn đang thực hiện gỡ bỏ hoàn toàn hạng phòng này khỏi hệ thống.
-2. Bạn PHẢI tự kiểm tra và xử lý các đơn hàng của hạng phòng này trong thời gian tới.
-3. Hệ thống sẽ KHÔNG chịu trách nhiệm về các vấn đề phát sinh hoặc khiếu nại liên quan đến việc thiếu phòng cho khách đã đặt trước.
-Bạn có chắc chắn xác nhận đã xử lý hết các đơn hàng và muốn tiếp tục xóa?`;
-
-        const confirmDelete = window.confirm(warningMessage);
-        if (!confirmDelete) return;
-
         try {
-            setLoading(true); // Hiển thị trạng thái loading khi đang xóa
-            await roomTypeService.deleteRoomType(id);
-
-            // Thông báo thành công
-            if (toastRef.current) {
-                toastRef.current.addMessage({
-                    mode: "success",
-                    message: "Đã xóa hạng phòng thành công!"
-                });
+            setLoading(true);
+            const res = await roomTypeService.deleteRoomType(id);
+            if (res?.code === 200 || res?.status === 200 || res?.success || res) {
+                if (toastRef.current) {
+                    toastRef.current.addMessage({
+                        mode: "success",
+                        message: "Đã xóa hạng phòng thành công!"
+                    });
+                }
+                await fetchRoomTypes();
             }
-
-            await fetchRoomTypes();
         } catch (err) {
             console.error("Xóa thất bại:", err);
-
-            // Thông báo lỗi
+            const errorCode = err?.response?.data?.code;
+            let errorMessage = "Có lỗi xảy ra, vui lòng thử lại sau.";
+            if (errorCode === 2003) {
+                errorMessage = "Lỗi: Không tìm thấy hạng phòng này trên hệ thống.";
+            } else if (errorCode === 2004) {
+                errorMessage = "Không thể xóa: Hạng phòng này đang có đơn hàng ràng buộc hoặc đang được sử dụng.";
+            }
             if (toastRef.current) {
                 toastRef.current.addMessage({
                     mode: "error",
-                    message: "Có lỗi xảy ra hoặc hạng phòng này đang có đơn hàng ràng buộc nên không thể xóa."
+                    message: errorMessage
                 });
             }
         } finally {

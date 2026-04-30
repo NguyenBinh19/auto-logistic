@@ -236,7 +236,7 @@ const Header = () => {
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tài khoản đối tác</p>
                 </div>
                 <button onClick={() => { navigate("/profile"); setIsPartnerDropdownOpen(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all">
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all">
                     <User size={18} className="text-slate-400" /> Hồ sơ cá nhân
                 </button>
                 <button onClick={() => {
@@ -244,7 +244,7 @@ const Header = () => {
                     navigate(isAgencyUser ? "/agency/agency-dashboard" : "/hotel/dashboard");
                     setIsPartnerDropdownOpen(false);
                 }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all">
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-all">
                     <LayoutDashboard size={18} className="text-slate-400" />
                     Dashboard {isAgencyUser ? "Đại lý" : "Khách sạn"}
                 </button>
@@ -281,7 +281,7 @@ const Header = () => {
                                         className={`px-4 py-2 text-[15px] font-bold rounded-lg transition-all ${isActive
                                             ? "text-blue-600 bg-blue-50"
                                             : "text-slate-500 hover:text-blue-600 hover:bg-blue-50"
-                                            }`}
+                                        }`}
                                     >
                                         {link.name}
                                     </Link>
@@ -295,17 +295,17 @@ const Header = () => {
                         {!user ? (
                             <div className="flex items-center gap-3">
                                 <button onClick={() => navigate("/login")}
-                                    className="px-6 py-2.5 text-[15px] font-bold text-slate-700 hover:text-blue-600 transition-colors">
+                                        className="px-6 py-2.5 text-[15px] font-bold text-slate-700 hover:text-blue-600 transition-colors">
                                     Đăng nhập
                                 </button>
                                 <button onClick={() => navigate("/register")}
-                                    className="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">
+                                        className="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">
                                     Đăng ký đối tác
                                 </button>
                             </div>
                         ) : isAdmin ? (
                             <div className="flex items-center gap-5">
-                                <NotificationBell />
+                                <NotificationBell/>
                                 <div className="relative" ref={dropdownRef}>
                                     <div
                                         onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
@@ -323,12 +323,12 @@ const Header = () => {
                                             {/* Hiển thị Label động dựa trên Role */}
                                             <span
                                                 className={`text-[10px] font-bold px-2 py-0.5 rounded-md mt-1 self-start uppercase tracking-wider ${isFullAdmin ? "text-blue-500 bg-blue-50" : "text-amber-600 bg-amber-50"
-                                                    }`}>
+                                                }`}>
                                                 {isFullAdmin ? "Super Admin" : "Admin Staff"}
                                             </span>
                                         </div>
                                         <ChevronDown size={16}
-                                            className={`text-slate-400 transition-transform ${isAdminDropdownOpen ? 'rotate-180' : ''}`} />
+                                                     className={`text-slate-400 transition-transform ${isAdminDropdownOpen ? 'rotate-180' : ''}`}/>
                                     </div>
                                     {isAdminDropdownOpen && (
                                         <div
@@ -337,20 +337,20 @@ const Header = () => {
                                                 navigate("/profile");
                                                 setIsAdminDropdownOpen(false);
                                             }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600">
-                                                <User size={18} /> Hồ sơ cá nhân
+                                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600">
+                                                <User size={18}/> Hồ sơ cá nhân
                                             </button>
                                             <button onClick={() => {
                                                 navigate("/admin/dashboard");
                                                 setIsAdminDropdownOpen(false);
                                             }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600">
-                                                <LayoutDashboard size={18} /> Dashboard quản trị
+                                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-600">
+                                                <LayoutDashboard size={18}/> Dashboard quản trị
                                             </button>
                                             <div className="h-px bg-slate-100 my-1"></div>
                                             <button onClick={handleLogout}
-                                                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors">
-                                                <LogOut size={18} /> Đăng xuất
+                                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-rose-600 hover:bg-rose-50 transition-colors">
+                                                <LogOut size={18}/> Đăng xuất
                                             </button>
                                         </div>
                                     )}
@@ -361,13 +361,13 @@ const Header = () => {
                                 className="flex items-center gap-6 bg-slate-50 px-4 rounded-2xl border border-slate-100">
 
                                 <div onClick={() => navigate("/agency/prepaid")}
-                                    className="flex flex-col cursor-pointer p-1.5 min-w-[120px]">
+                                     className="flex flex-col cursor-pointer p-1.5 min-w-[120px]">
                                     <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wide">Số dư khả dụng</span>
                                     <span
                                         className="text-lg font-black text-slate-800">{formatCurrency(financeInfo.walletBalance)}</span>
                                 </div>
                                 <button onClick={() => navigate("/agency/prepaid")}
-                                    className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md hover:bg-blue-700 transition active:scale-95">Nạp
+                                        className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-sm shadow-md hover:bg-blue-700 transition active:scale-95">Nạp
                                     tiền
                                 </button>
                                 <div className="flex flex-col p-1.5 min-w-[150px]">
@@ -381,7 +381,7 @@ const Header = () => {
                                         {financeInfo.creditUsedPercent || 0}% đã sử dụng
                                     </span>
                                 </div>
-                                <NotificationBell />
+                                <NotificationBell/>
                                 {/*<Link to="/profile"*/}
                                 {/*      className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white shadow-sm border border-slate-100 hover:border-blue-600 transition-colors">*/}
                                 {/*    <div*/}
@@ -398,27 +398,31 @@ const Header = () => {
                                 {/* PHẦN DROPDOWN CHO AGENCY */}
                                 <div className="relative" ref={dropdownRef}>
                                     <div onClick={() => setIsPartnerDropdownOpen(!isPartnerDropdownOpen)}
-                                        className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white shadow-sm border border-slate-100 hover:border-blue-600 transition-all cursor-pointer group">
-                                        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                            <UserCircle size={20} />
+                                         className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white shadow-sm border border-slate-100 hover:border-blue-600 transition-all cursor-pointer group">
+                                        <div
+                                            className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <UserCircle size={20}/>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-sm font-black text-slate-800 leading-none">{user?.lastName} {user?.firstName}</span>
-                                            <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider mt-1">Đối tác Đại lý</span>
+                                            <span
+                                                className="text-sm font-black text-slate-800 leading-none">{user?.lastName} {user?.firstName}</span>
+                                            <span
+                                                className="text-[10px] font-bold text-blue-500 uppercase tracking-wider mt-1">Đối tác Đại lý</span>
                                         </div>
-                                        <ChevronDown size={14} className={`text-slate-400 transition-transform ${isPartnerDropdownOpen ? 'rotate-180' : ''}`} />
+                                        <ChevronDown size={14}
+                                                     className={`text-slate-400 transition-transform ${isPartnerDropdownOpen ? 'rotate-180' : ''}`}/>
                                     </div>
                                     {isPartnerDropdownOpen && renderPartnerDropdownMenu()}
                                 </div>
 
                                 <button onClick={handleLogout}
-                                    className="p-2 text-slate-400 hover:text-rose-600 transition-colors"><LogOut
-                                        size={20} /></button>
+                                        className="p-2 text-slate-400 hover:text-rose-600 transition-colors"><LogOut
+                                    size={20}/></button>
                             </div>
                         ) : (
                             <div
                                 className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
-                                <NotificationBell />
+                                <NotificationBell/>
                                 {renderKycStatus()}
                                 {/*<button onClick={() => navigate("/profile")}*/}
                                 {/*        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${location.pathname === "/profile" ? "bg-blue-600 text-white shadow-md" : "bg-white text-slate-600 hover:text-blue-600 border border-slate-100 shadow-sm"}`}>*/}
@@ -431,15 +435,17 @@ const Header = () => {
                                         onClick={() => setIsPartnerDropdownOpen(!isPartnerDropdownOpen)}
                                         className="flex items-center gap-3 px-4 py-1.5 cursor-pointer group hover:bg-white rounded-xl transition-all"
                                     >
-                                        <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                            <UserCircle size={20} />
+                                        <div
+                                            className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                            <UserCircle size={20}/>
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-sm font-black text-slate-800 leading-none">
                                                 {user?.lastName} {user?.firstName}
                                             </span>
                                             {/* Logic hiển thị nhãn động dựa trên Role */}
-                                            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-1">
+                                            <span
+                                                className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mt-1">
                                                 {userRoles.some(r => r.includes("HOTEL"))
                                                     ? "Đối tác Khách sạn"
                                                     : userRoles.some(r => r.includes("AGENCY"))
@@ -465,15 +471,18 @@ const Header = () => {
                                 {/*    </div>*/}
                                 {/*</div>*/}
                                 <div className="w-px h-8 bg-slate-200 mx-2"></div>
-                                <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-rose-600 transition-colors" title="Đăng xuất"><LogOut size={20} /></button>
+                                <button onClick={handleLogout}
+                                        className="p-2 text-slate-400 hover:text-rose-600 transition-colors"
+                                        title="Đăng xuất"><LogOut size={20}/></button>
                             </div>
                         )}
                     </div>
 
                     {/* MOBILE BUTTON */}
                     <div className="lg:hidden">
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2.5 rounded-xl bg-slate-50 text-slate-600 hover:bg-blue-50 transition-all">
-                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)}
+                                className="p-2.5 rounded-xl bg-slate-50 text-slate-600 hover:bg-blue-50 transition-all">
+                            {isMenuOpen ? <X size={24}/> : <Menu size={24}/>}
                         </button>
                     </div>
                 </div>
@@ -481,7 +490,8 @@ const Header = () => {
 
             {/* MOBILE MENU - Đã tối ưu & sạch sẽ */}
             {isMenuOpen && (
-                <div className="lg:hidden bg-white border-t border-slate-100 p-6 space-y-6 shadow-2xl animate-in slide-in-from-top-2">
+                <div
+                    className="lg:hidden bg-white border-t border-slate-100 p-6 space-y-6 shadow-2xl animate-in slide-in-from-top-2">
                     <nav className="flex flex-col space-y-2">
                         {/* 1. Nav Links (Dành cho khách hoặc chế độ Demo) */}
                         {(!user || isDemoActive) && navLinks.map((link) => {
@@ -495,7 +505,7 @@ const Header = () => {
                                     to={link.href}
                                     onClick={() => setIsMenuOpen(false)}
                                     className={`px-4 py-3 text-lg font-bold rounded-xl flex items-center justify-between ${isActive ? "text-blue-600 bg-blue-50" : "text-slate-700 hover:bg-slate-50"
-                                        }`}
+                                    }`}
                                 >
                                     {link.name}
                                     {link.isDemo && isActive && (

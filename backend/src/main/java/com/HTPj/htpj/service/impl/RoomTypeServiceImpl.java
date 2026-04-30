@@ -13,10 +13,7 @@ import com.HTPj.htpj.entity.Users;
 import com.HTPj.htpj.exception.AppException;
 import com.HTPj.htpj.exception.ErrorCode;
 import com.HTPj.htpj.mapper.RoomTypeMapper;
-import com.HTPj.htpj.repository.HotelRepository;
-import com.HTPj.htpj.repository.RoomTypeImageRepository;
-import com.HTPj.htpj.repository.RoomTypeRepository;
-import com.HTPj.htpj.repository.UserRepository;
+import com.HTPj.htpj.repository.*;
 import com.HTPj.htpj.service.RoomTypeService;
 import com.HTPj.htpj.service.S3Service;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -44,6 +41,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     private final RoomTypeImageRepository roomTypeImageRepository;
     private final S3Service s3Service;
     private final UserRepository usersRepository;
+    private final BookingDetailRepository bookingDetailRepository;
 
 
     @Override
@@ -65,7 +63,13 @@ public class RoomTypeServiceImpl implements RoomTypeService {
             throw new AppException(ErrorCode.HOTEL_NOT_FOUND);
         }
 
-        if (roomTypeRepository.existsByRoomCode(request.getRoomCode())) {
+//        if (roomTypeRepository.existsByRoomCode(request.getRoomCode())) {
+//            throw new AppException(ErrorCode.ROOM_TYPE_EXISTED);
+//        }
+
+        if (roomTypeRepository.existsByHotel_HotelIdAndRoomCode(
+                hotel.getHotelId(),
+                request.getRoomCode())) {
             throw new AppException(ErrorCode.ROOM_TYPE_EXISTED);
         }
 
@@ -188,6 +192,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
     @Override
     public RoomTypeDetailResponse inactiveRoomType(Integer roomTypeId) {
 
+        long activeBookingCount = bookingDetailRepository.countActiveBookingByRoomType(roomTypeId);
+
+        if (activeBookingCount > 0) {
+            throw new AppException(ErrorCode.ROOM_TYPE_IN_USE);}
+
         RoomType roomType = roomTypeRepository.findById(roomTypeId)
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_TYPE_NOT_FOUND));
 
@@ -200,6 +209,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
         return RoomTypeMapper.toDetailResponse(updatedRoomType, amenitiesList);
     }
+
 
     private List<String> parseAmenities(String amenitiesJson) {
         try {

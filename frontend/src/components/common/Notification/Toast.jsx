@@ -15,32 +15,32 @@ export default function Toast({ message, type = "info", onClose, autoClose, auto
 
   const styles = {
     success: {
-      bg: "bg-green-50 border-green-400 text-green-700",
-      icon: <CheckCircle size={18} className="text-green-500" />,
+      bg: "bg-emerald-50 border-emerald-500 text-emerald-800",
+      icon: <CheckCircle size={18} className="text-emerald-500" />,
     },
     error: {
-      bg: "bg-red-50 border-red-400 text-red-700",
-      icon: <XCircle size={18} className="text-red-500" />,
+      bg: "bg-rose-50 border-rose-500 text-rose-800",
+      icon: <XCircle size={18} className="text-rose-500" />,
     },
     info: {
-      bg: "bg-[rgb(40,169,224,0.1)] border-[rgb(40,169,224,0.4)] text-[rgb(40,169,224)]",
-      icon: <Info size={18} className="text-[rgb(40,169,224)]" />,
+      bg: "bg-sky-50 border-sky-500 text-sky-800",
+      icon: <Info size={18} className="text-sky-500" />,
     },
     warning: {
-      bg: "bg-yellow-50 border-yellow-400 text-yellow-700",
-      icon: <AlertTriangle size={18} className="text-yellow-500" />,
+      bg: "bg-amber-50 border-amber-500 text-amber-800",
+      icon: <AlertTriangle size={18} className="text-amber-600" />,
     },
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      className={`flex items-center gap-3 border-l-4 px-4 py-3 rounded-xl shadow-sm ${styles[type].bg} transition-all`}
-    >
-      {styles[type].icon}
-      <p className="text-sm font-medium">{message}</p>
-    </motion.div>
+      <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className={`flex items-center gap-3 border-l-4 px-4 py-3 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)] ${styles[type].bg} transition-all`}
+      >
+        {styles[type].icon}
+        <p className="text-sm font-medium">{message}</p>
+      </motion.div>
   );
 }

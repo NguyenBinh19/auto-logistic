@@ -121,8 +121,17 @@ const AppRoutes = () => {
                 <Route path="/user-guide" element={<UserGuidePage />} />
                 <Route path="/regulation" element={<RegulationPage />} />
 
-                <Route path="/kyc-intro" element={<KYCIntroduction />} />
-                <Route path="/kyc/status" element={<VerificationStatusPage />} />
+                <Route path="/kyc-intro" element={
+                    <ProtectedRoute>
+                        <KYCIntroduction />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="/kyc/status" element={
+                    <ProtectedRoute>
+                        <VerificationStatusPage />
+                    </ProtectedRoute>
+                } />
                 <Route path="/profile" element={
                     <ProtectedRoute>
                         <UserProfile />
@@ -187,11 +196,11 @@ const AppRoutes = () => {
 
                 {/*Luồng Admin System*/}
                 <Route path="/admin"
-                    element={
-                        <ProtectedRoute roles={["ROLE_ADMIN", "ROLE_ADMIN_STAFF"]}>
-                            <AdminLayout />
-                        </ProtectedRoute>
-                    }>
+                       element={
+                           <ProtectedRoute roles={["ROLE_ADMIN", "ROLE_ADMIN_STAFF"]}>
+                               <AdminLayout />
+                           </ProtectedRoute>
+                       }>
                     <Route path="dashboard" element={<AdminDashboardPage />} />
                     <Route path="kyc-queue" element={<KYCQueuePage />} />
                     <Route path="view-booking" element={<ViewAllBooking />} />

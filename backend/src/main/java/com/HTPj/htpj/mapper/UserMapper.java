@@ -10,7 +10,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-//    @Mapping(target = "id", ignore = true)
+    //    @Mapping(target = "id", ignore = true)
 //    @Mapping(target = "firstName", ignore = true)
 //    @Mapping(target = "lastName", ignore = true)
     @Mapping(target = "address", ignore = true)
@@ -30,6 +30,8 @@ public interface UserMapper {
     @Mapping(target = "status", ignore = true)
     Users toUser(UserCreationRequest request);
 
+    @Mapping(source = "agency.agencyId", target = "agencyId")
+    @Mapping(source = "hotel.hotelId", target = "hotelId")
     UserResponse toUserResponse(Users user);
 
     @Mapping(target = "roles", ignore = true)

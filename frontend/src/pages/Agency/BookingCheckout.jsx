@@ -42,26 +42,37 @@ const BookingTimerBar = ({ expiredAt, onExpire, onExtend, isExtending, extendCou
     const isLowTime = timeLeft > 0 && timeLeft < 60;
 
     return (
-        <div className={`border-b sticky top-0 z-50 transition-colors ${isLowTime ? 'bg-red-50' : 'bg-white'}`}>
-            <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-                <Clock size={18} className={isLowTime ? "text-red-500 animate-pulse" : "text-orange-500"} />
-                <span className="text-sm text-slate-600 font-medium">Phòng và giá tốt đang được giữ trong:</span>
-                <span className={`font-bold ${isLowTime ? "text-red-600" : "text-blue-600"}`}>
-                    {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
-                </span>
+        <div className={`border-b sticky top-0 z-50 transition-all ${isLowTime ? 'bg-red-50 shadow-md' : 'bg-white shadow-sm'}`}>
+            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <Clock
+                        size={24}
+                        className={`${isLowTime ? "text-red-500 animate-pulse" : "text-orange-500"} shrink-0`}
+                    />
+                    <div className="flex items-center gap-2 md:gap-4 whitespace-nowrap min-w-0">
+                        <span className="text-sm sm:text-base md:text-xl text-slate-700 font-bold leading-tight truncate">
+                            Phòng và giá tốt đang được giữ trong:
+                        </span>
+                        <span
+                            className={`text-lg sm:text-xl md:text-3xl font-black tabular-nums tracking-tight shrink-0 ${isLowTime ? "text-red-600" : "text-blue-700"}`}>
+                            {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+                        </span>
+                    </div>
+                </div>
 
-                <div className="ml-auto flex items-center gap-3">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+                <div className="flex items-center gap-3 md:gap-5 shrink-0">
+                    <span
+                        className="hidden sm:block text-[10px] md:text-xs font-black text-slate-600 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded whitespace-nowrap">
                         Lượt gia hạn: {extendCount}/{maxExtensions}
                     </span>
                     {isLowTime && extendCount < maxExtensions && (
                         <button
                             onClick={onExtend}
                             disabled={isExtending}
-                            className="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-50"
+                            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 active:scale-95 text-white px-4 py-2 md:px-6 md:py-3 rounded-xl text-xs md:text-base font-extrabold transition-all shadow-lg shadow-red-200 disabled:opacity-50 whitespace-nowrap"
                         >
-                            {isExtending ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
-                            GIA HẠN
+                            {isExtending ? <Loader2 size={18} className="animate-spin"/> : <RefreshCw size={18}/>}
+                            <span>GIA HẠN</span>
                         </button>
                     )}
                 </div>
@@ -99,7 +110,9 @@ export default function BookingCheckoutPage() {
     // Khóa cuộn trang khi mở modal
     useEffect(() => {
         document.body.style.overflow = showPdfModal ? 'hidden' : 'unset';
-        return () => { document.body.style.overflow = 'unset'; };
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
     }, [showPdfModal]);
 
     // const [data, setData] = useState(location.state || {});
@@ -259,27 +272,27 @@ export default function BookingCheckoutPage() {
             }
         } catch (error) { alert("Lỗi gia hạn."); } finally { setIsExtending(false); }
     };
-const validateSelectedAddons = async () => {
-    if (selectedAddons.length === 0) return true;
+    const validateSelectedAddons = async () => {
+        if (selectedAddons.length === 0) return true;
 
-    const res = await addonServiceApi.getActiveAddonServicesByHotel(data.hotelId);
-    const activeServices = res?.result || [];
+        const res = await addonServiceApi.getActiveAddonServicesByHotel(data.hotelId);
+        const activeServices = res?.result || [];
 
-    const activeServiceIds = new Set(
-        activeServices.map(s => Number(s.serviceId))
-    );
+        const activeServiceIds = new Set(
+            activeServices.map(s => Number(s.serviceId))
+        );
 
-    const invalidAddon = selectedAddons.find(
-        addon => !activeServiceIds.has(Number(addon.serviceId))
-    );
+        const invalidAddon = selectedAddons.find(
+            addon => !activeServiceIds.has(Number(addon.serviceId))
+        );
 
-    if (invalidAddon) {
-        alert(`Dịch vụ "${invalidAddon.serviceName}" hiện không còn khả dụng. Vui lòng reload lại trang để cập nhật lại.`);
-        return false;
-    }
+        if (invalidAddon) {
+            alert(`Dịch vụ "${invalidAddon.serviceName}" hiện không còn khả dụng. Vui lòng reload lại trang để cập nhật lại.`);
+            return false;
+        }
 
-    return true;
-};
+        return true;
+    };
     const handleConfirmBooking = async () => {
         const { name, email, phone } = customerInfo;
         if (!name.trim() || !email.trim() || !phone.trim() || !paymentMethod) return alert("Vui lòng điền đủ thông tin!");
@@ -310,11 +323,11 @@ const validateSelectedAddons = async () => {
 
         setIsSubmitting(true);
         try {
-             const addonValid = await validateSelectedAddons();
-    if (!addonValid) {
-        setIsSubmitting(false);
-        return;
-    }
+            const addonValid = await validateSelectedAddons();
+            if (!addonValid) {
+                setIsSubmitting(false);
+                return;
+            }
             const payload = {
                 holdCode: data.holdCode,
                 guestName: name.trim(),
@@ -458,7 +471,7 @@ const validateSelectedAddons = async () => {
                     <div className="space-y-4">
                         {data.selectedRooms?.map((room, idx) => (
                             <div key={idx}
-                                className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
+                                 className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm space-y-4">
                                 <h3 className="text-lg font-black text-slate-800">{room.name} x {room.count}</h3>
                                 <div className="flex flex-wrap gap-y-3 gap-x-6 text-[13px]">
                                     <div className="flex items-center gap-2 text-slate-600">
@@ -497,7 +510,7 @@ const validateSelectedAddons = async () => {
                                     className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${paymentMethod === "WALLET"
                                         ? "border-blue-500 bg-blue-50/40 shadow-sm"
                                         : "border-slate-100 hover:bg-slate-50"
-                                        } ${isWalletInsufficient ? "opacity-60 bg-slate-50 cursor-not-allowed" : "cursor-pointer"}`}
+                                    } ${isWalletInsufficient ? "opacity-60 bg-slate-50 cursor-not-allowed" : "cursor-pointer"}`}
                                 >
                                     <div className="flex items-center gap-4">
                                         <input
@@ -527,7 +540,7 @@ const validateSelectedAddons = async () => {
                                         className={`px-3 py-1.5 rounded-full text-[11px] font-black border transition-colors ${isWalletInsufficient
                                             ? "bg-red-50 text-red-600 border-red-100"
                                             : "bg-blue-100 text-blue-700 border-blue-200"
-                                            }`}>
+                                        }`}>
                                         Còn: {walletBal.toLocaleString()} đ
                                     </div>
                                 </label>
@@ -556,7 +569,7 @@ const validateSelectedAddons = async () => {
                                     className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${paymentMethod === "CREDIT"
                                         ? "border-purple-500 bg-purple-50/40 shadow-sm"
                                         : "border-slate-100 hover:bg-slate-50"
-                                        } ${isCreditInsufficient ? "opacity-60 bg-slate-50 cursor-not-allowed" : "cursor-pointer"}`}
+                                    } ${isCreditInsufficient ? "opacity-60 bg-slate-50 cursor-not-allowed" : "cursor-pointer"}`}
                                 >
                                     <div className="flex items-center gap-4">
                                         <input
@@ -586,7 +599,7 @@ const validateSelectedAddons = async () => {
                                         className={`px-3 py-1.5 rounded-full text-[11px] font-black border transition-colors ${isCreditInsufficient
                                             ? "bg-red-50 text-red-600 border-red-100"
                                             : "bg-purple-100 text-purple-700 border-purple-200"
-                                            }`}>
+                                        }`}>
                                         Còn: {creditBal.toLocaleString()} đ
                                     </div>
                                 </label>
@@ -652,7 +665,7 @@ const validateSelectedAddons = async () => {
                                         <label className="text-[11px] font-black text-slate-800 uppercase">Mã
                                             giảm giá</label>
                                         <button onClick={() => setShowWallet(!showWallet)}
-                                            className="text-[10px] font-bold text-blue-600 hover:underline">
+                                                className="text-[10px] font-bold text-blue-600 hover:underline">
                                             {showWallet ? "Đóng ví" : "Chọn từ ví"}
                                         </button>
                                     </div>
@@ -667,7 +680,7 @@ const validateSelectedAddons = async () => {
                                                 disabled={!!promoData}
                                             />
                                             {isCheckingPromo && <Loader2 size={14}
-                                                className="absolute right-3 top-3 animate-spin text-slate-400" />}
+                                                                         className="absolute right-3 top-3 animate-spin text-slate-400" />}
                                         </div>
                                         <button
                                             onClick={() => promoData ? handleRemoveCoupon() : handleApplyCoupon()}
@@ -683,7 +696,7 @@ const validateSelectedAddons = async () => {
                                             className="mt-2 bg-white border border-slate-100 rounded-xl shadow-xl max-h-48 overflow-y-auto divide-y z-50 relative">
                                             {availableCoupons.length > 0 ? availableCoupons.map((cp) => (
                                                 <div key={cp.id} onClick={() => handleApplyCoupon(cp.code)}
-                                                    className="p-3 hover:bg-blue-50 cursor-pointer flex justify-between items-center">
+                                                     className="p-3 hover:bg-blue-50 cursor-pointer flex justify-between items-center">
                                                     <div>
                                                         <div
                                                             className="text-xs font-bold text-slate-700">{cp.code}</div>
@@ -740,7 +753,7 @@ const validateSelectedAddons = async () => {
                                             />
                                         </div>
                                         <label htmlFor="terms"
-                                            className="text-[12px] text-slate-600 leading-tight cursor-pointer select-none">
+                                               className="text-[12px] text-slate-600 leading-tight cursor-pointer select-none">
                                             Tôi đồng ý với {" "}
                                             <span
                                                 onClick={() => policyUrl ? setShowPdfModal(true) : alert("Tài liệu đang được cập nhật!")}

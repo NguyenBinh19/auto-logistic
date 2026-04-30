@@ -46,7 +46,7 @@ const ProtectedRoute = ({ children, roles: requiredRoles }) => {
     // if (userRolesStrings.some(role => role.includes("ADMIN"))) return children;
 
     // 4. THOÁT LOOP: Luôn cho phép ở lại các trang KYC
-    const kycPaths = ["/kyc/status", "/profile"];
+    const kycPaths = ["/kyc/status", "/profile","/kyc-intro"];
     if (kycPaths.some(path => location.pathname.startsWith(path))) {
         return children;
     }

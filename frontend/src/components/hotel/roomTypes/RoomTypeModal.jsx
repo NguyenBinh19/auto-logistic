@@ -122,20 +122,14 @@ const RoomTypeModal = ({ onClose, onSuccess }) => {
 
     // --- XỬ LÝ TIỆN ÍCH (TAGS) ---
     const handleAddTag = (e) => {
-        if (e.key && e.key !== 'Enter') return;
+        if (e && e.key && e.key !== 'Enter') return;
         if (e) e.preventDefault();
-
         const val = tagInput.trim();
         if (val) {
             if (!form.amenities.includes(val)) {
-                setForm(prev => ({
-                    ...prev,
-                    amenities: [...prev.amenities, val]
-                }));
+                setForm(prev => ({ ...prev, amenities: [...prev.amenities, val] }));
                 setTagInput("");
             } else {
-                // Nếu trùng thì chỉ cần xóa trắng hoặc báo lỗi nhẹ
-                alert("Tiện ích này đã tồn tại!");
                 setTagInput("");
             }
         }

@@ -1,0 +1,97 @@
+services:
+  server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: server
+    hostname: server
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Justin@2025
+    ports:
+      - "1433:1433"
+    networks:
+      - 36-network
+
+  Prometheus:
+    image: prom/prometheus:v3.8.0
+    container_name: prometheus
+    volumes:
+      - ./logstash/pipeline/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - 36-network
+
+  prometheus-mssql-exporter:
+    image: awaragi/prometheus-mssql-exporter
+    container_name: prometheus-mssql-exporter
+    environment:
+      - SERVER=server
+      - USERNAME=sa
+      - PASSWORD=Justin@2025
+      - DEBUG=app
+    ports:
+      - "4000:4000"
+    networks:
+      - 36-network
+
+  Grafana:
+    image: grafana/grafana:12.3
+    container_name: Grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    networks:
+      - 36-network
+
+  temporal-postgres:
+      image: postgres:13
+      container_name: temporal-postgres
+      restart: always
+      environment:
+          POSTGRES_USER: temporal
+          POSTGRES_PASSWORD: temporal
+      volumes:
+          - temporal_pg_data:/var/lib/postgresql/data
+      networks:
+          - 36-network
+
+  temporal:
+      image: temporalio/auto-setup:1.22
+      container_name: hms-temporal
+      restart: always
+      depends_on:
+          - temporal-postgres
+      environment:
+          - DB=postgres12
+          - DB_PORT=5432
+          - POSTGRES_USER=temporal
+          - POSTGRES_PWD=temporal
+          - POSTGRES_SEEDS=temporal-postgres
+      ports:
+          - "7233:7233"
+      networks:
+          - 36-network
+
+  vault:
+    image: hashicorp/vault:1.21
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=hms@2026
+      - VAULT_ADDR=http://0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    command: server -dev -dev-root-token-id=hms@2026
+    networks:
+      - 36-network
+
+
+networks:
+  36-network:
+    driver: bridge
+
+volumes:
+  temporal_pg_data:

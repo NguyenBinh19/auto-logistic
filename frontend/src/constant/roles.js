@@ -1,0 +1,19 @@
+// constants/roles.js
+
+// 1. Role gốc từ backend
+export const ROLES = {
+    ADMIN: "ROLE_ADMIN",
+    ADMIN_STAFF:"ROLE_ADMIN_STAFF",
+
+    HOTEL_MANAGER: "ROLE_HOTEL_MANAGER",
+    HOTEL_STAFF: "ROLE_HOTEL_STAFF",
+
+    AGENCY_MANAGER: "ROLE_AGENCY_MANAGER",
+    AGENCY_STAFF: "ROLE_AGENCY_STAFF",
+};
+
+// 2. Group role (dùng cho FE)
+export const ROLE_GROUP = {
+    HOTEL: [ROLES.HOTEL_MANAGER, ROLES.HOTEL_STAFF],
+    AGENCY: [ROLES.AGENCY_MANAGER, ROLES.AGENCY_STAFF],
+};

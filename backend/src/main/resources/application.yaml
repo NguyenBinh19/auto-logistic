@@ -1,0 +1,83 @@
+server:
+  servlet:
+    context-path: /
+    session:
+      cookie:
+        name: JSESSIONID
+        same-site: none
+        secure: true
+        http-only: true
+  forward-headers-strategy: framework
+  port: 8080
+
+spring:
+  application:
+    name: hms
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.SQLServerDialect
+  cloud:
+    vault:
+      kv:
+        enabled: true
+        backend: secret
+        default-context: application
+        profile-separator: '/'
+      authentication: TOKEN
+      token: hms@2026
+      scheme: http
+      host: 103.167.89.125
+      port: 8200
+  config:
+    import: vault://
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:815111395458-jg0lh3ker5tkrlicliapsm26a3t41p6f.apps.googleusercontent.com}
+            client-secret: ${GOOGLE_CLIENT_SECRET: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}
+            scope: openid, profile, email
+            redirect-uri: "https://www.hmsb2b.site/backend/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: bookingsphere@gmail.com
+    password: vztu qatl dbij hvpg
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  valid-duration: 6000 # in second
+  refreshable-duration: 36000 # in seconds
+
+app:
+  frontend-url: https://www.hmsb2b.site
+
+springdoc:
+  api-docs:
+    path: /api-docs
+
+temporal:
+  connection:
+    target: localhost:7233
+  namespace: default

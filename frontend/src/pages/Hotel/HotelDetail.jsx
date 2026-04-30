@@ -358,9 +358,7 @@ export default function HotelDetailPage() {
                 <main className="max-w-[1200px] mx-auto w-full pb-24">
                     <section className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-8">
                         {/* IMAGE AREA */}
-                        <div className="relative h-[480px] bg-slate-200">
-
-                            {/* HERO IMAGE */}
+                        <div className="relative aspect-[5/2] bg-slate-200">
                             <img
                                 src={hotel.images?.[0] || DEFAULT_HOTEL_IMAGE}
                                 className="w-full h-full object-cover cursor-pointer"

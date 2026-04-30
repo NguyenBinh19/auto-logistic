@@ -186,9 +186,9 @@ public class RevenueReportServiceImpl implements RevenueReportService {
 
             if ("CANCELLED".equalsIgnoreCase(b.getBookingStatus())) {
                 cancelledBookings++;
-            } else {
-                activeBookings++;
             }
+            activeBookings++;
+
 
             // Only count room nights for non-cancelled statuses
             if (countsRoomNights(b)) {

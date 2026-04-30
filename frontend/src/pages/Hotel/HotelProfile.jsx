@@ -315,7 +315,7 @@ const HotelProfileManager = () => {
         return type === 'FIXED' ? `${num}đ` : `${num}%`;
     };
 
-    if (loading) return <div className="h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-blue-600" size={40}/></div>;
+    if (loading) return <div className="h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-blue-600" size={40} /></div>;
 
     return (
         <div className="bg-[#F8FAFC] min-h-screen p-6 md:p-10 font-sans text-slate-900">
@@ -339,14 +339,14 @@ const HotelProfileManager = () => {
                         <div>
                             <h1 className="text-xl font-black uppercase tracking-tight text-slate-800">{formData.hotelName}</h1>
                             <p className="text-xs text-slate-400 font-bold flex items-center gap-1 mt-1">
-                                <MapPin size={12}/> {formData.city}, {formData.country}
+                                <MapPin size={12} /> {formData.city}, {formData.country}
                             </p>
                         </div>
                     </div>
                     {canEdit && (
-                    <button onClick={handleSave} disabled={saving} className="w-full md:w-auto bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-600 transition-all active:scale-95">
-                        {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} Cập nhật thông tin
-                    </button>
+                        <button onClick={handleSave} disabled={saving} className="w-full md:w-auto bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-600 transition-all active:scale-95">
+                            {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />} Cập nhật thông tin
+                        </button>
                     )}
                 </div>
 
@@ -355,40 +355,40 @@ const HotelProfileManager = () => {
                     <div className="lg:col-span-8 space-y-6">
                         <div className="bg-white p-8 rounded-[40px] border border-slate-200 shadow-sm">
                             <h3 className="text-blue-600 font-black uppercase text-[11px] tracking-[0.2em] mb-8 flex items-center gap-2">
-                                <Info size={16}/> Thông tin chung</h3>
+                                <Info size={16} /> Thông tin chung</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <InputField
                                     label="Tên khách sạn"
                                     value={formData.hotelName}
-                                    onChange={v => setFormData({...formData, hotelName: v})}
+                                    onChange={v => setFormData({ ...formData, hotelName: v })}
                                     error={errors.hotelName}
                                     disabled={!canEdit}
                                 />
                                 <InputField
                                     label="Số điện thoại"
                                     value={formData.phone}
-                                    onChange={v => setFormData({...formData, phone: v})}
+                                    onChange={v => setFormData({ ...formData, phone: v })}
                                     error={errors.phone}
                                     disabled={!canEdit}
                                 />
                                 <InputField
                                     label="Email"
                                     value={formData.email}
-                                    onChange={v => setFormData({...formData, email: v})}
+                                    onChange={v => setFormData({ ...formData, email: v })}
                                     error={errors.email}
                                     disabled={!canEdit}
                                 />
                                 <InputField
                                     label="Thành phố"
                                     value={formData.city}
-                                    onChange={v => setFormData({...formData, city: v})}
+                                    onChange={v => setFormData({ ...formData, city: v })}
                                     error={errors.city}
                                     disabled={!canEdit}
                                 />
                                 <div className="md:col-span-2">
                                     <InputField label="Địa chỉ chi tiết" value={formData.address}
-                                                onChange={v => setFormData({...formData, address: v})}
-                                                error={errors.address} disabled={!canEdit}/>
+                                        onChange={v => setFormData({ ...formData, address: v })}
+                                        error={errors.address} disabled={!canEdit} />
                                 </div>
                                 <div className="md:col-span-2 space-y-2">
                                     <label
@@ -397,11 +397,10 @@ const HotelProfileManager = () => {
                                     </label>
                                     <textarea
                                         disabled={!canEdit}
-                                        className={`w-full h-32 p-4 border-2 rounded-2xl outline-none text-sm font-medium transition-all ${
-                                            !canEdit ? 'bg-slate-100 border-slate-100 text-slate-400' : 'bg-slate-50 border-slate-100 focus:border-blue-600'
-                                        }`}
+                                        className={`w-full h-32 p-4 border-2 rounded-2xl outline-none text-sm font-medium transition-all ${!canEdit ? 'bg-slate-100 border-slate-100 text-slate-400' : 'bg-slate-50 border-slate-100 focus:border-blue-600'
+                                            }`}
                                         value={formData.description}
-                                        onChange={e => setFormData({...formData, description: e.target.value})}
+                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
                                         placeholder="Nhập mô tả chi tiết về khách sạn của bạn..."
                                     />
                                     {errors.description && (
@@ -419,21 +418,20 @@ const HotelProfileManager = () => {
                             {canEdit && (
                                 <div className="flex gap-2 mb-6">
                                     <input type="text" placeholder="Thêm tiện ích..."
-                                           className="flex-1 px-5 py-3 bg-slate-50 border-2 border-slate-100 rounded-xl text-sm font-bold outline-none focus:border-blue-600"
-                                           value={customAmenity} onChange={(e) => setCustomAmenity(e.target.value)}
-                                           onKeyPress={(e) => e.key === 'Enter' && addCustomAmenity()}/>
+                                        className="flex-1 px-5 py-3 bg-slate-50 border-2 border-slate-100 rounded-xl text-sm font-bold outline-none focus:border-blue-600"
+                                        value={customAmenity} onChange={(e) => setCustomAmenity(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && addCustomAmenity()} />
                                     <button onClick={addCustomAmenity}
-                                            className="bg-blue-600 text-white px-5 rounded-xl hover:bg-blue-700 transition-all">
-                                        <Plus size={20}/></button>
+                                        className="bg-blue-600 text-white px-5 rounded-xl hover:bg-blue-700 transition-all">
+                                        <Plus size={20} /></button>
                                 </div>
                             )}
                             <div className="flex flex-wrap gap-2">
                                 {formData.amenitiesList.map(item => (
                                     <button key={item} onClick={() => canEdit && toggleAmenity(item)}
-                                            className={`px-4 py-2 border-2 rounded-xl text-[11px] font-black uppercase flex items-center gap-2 ${
-                                                !canEdit ? 'bg-slate-50 text-slate-400 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'
+                                        className={`px-4 py-2 border-2 rounded-xl text-[11px] font-black uppercase flex items-center gap-2 ${!canEdit ? 'bg-slate-50 text-slate-400 border-slate-200' : 'bg-blue-50 text-blue-600 border-blue-100'
                                             }`}>
-                                        {item} {canEdit && <X size={14}/>}
+                                        {item} {canEdit && <X size={14} />}
                                     </button>
                                 ))}
                             </div>
@@ -453,11 +451,10 @@ const HotelProfileManager = () => {
                                         hàng</label>
                                     <input
                                         type="text"
-                                        className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl text-sm font-bold outline-none transition-all ${
-                                            bankErrors.bankName ? 'border-rose-500' : 'border-slate-100 focus:border-blue-600'
-                                        }`}
+                                        className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl text-sm font-bold outline-none transition-all ${bankErrors.bankName ? 'border-rose-500' : 'border-slate-100 focus:border-blue-600'
+                                            }`}
                                         value={bankData.bankName}
-                                        onChange={e => setBankData({...bankData, bankName: e.target.value})}
+                                        onChange={e => setBankData({ ...bankData, bankName: e.target.value })}
                                         placeholder="VD: VIETCOMBANK"
                                         disabled={!canEdit}
                                     />
@@ -470,13 +467,12 @@ const HotelProfileManager = () => {
                                         tài khoản</label>
                                     <input
                                         type="text"
-                                        className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl text-sm font-bold outline-none transition-all ${
-                                            bankErrors.bankAccountNumber ? 'border-rose-500' : 'border-slate-100 focus:border-blue-600'
-                                        }`}
+                                        className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl text-sm font-bold outline-none transition-all ${bankErrors.bankAccountNumber ? 'border-rose-500' : 'border-slate-100 focus:border-blue-600'
+                                            }`}
                                         value={bankData.bankAccountNumber}
                                         onChange={e => {
                                             const val = e.target.value.replace(/\D/g, "");
-                                            setBankData({...bankData, bankAccountNumber: val});
+                                            setBankData({ ...bankData, bankAccountNumber: val });
                                         }}
                                         placeholder="123XXXXXXXXX"
                                         disabled={!canEdit}
@@ -490,9 +486,8 @@ const HotelProfileManager = () => {
                                         tài khoản</label>
                                     <input
                                         type="text"
-                                        className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl text-sm font-bold outline-none transition-all ${
-                                            bankErrors.bankAccountHolder ? 'border-rose-500' : 'border-slate-100 focus:border-blue-600'
-                                        }`}
+                                        className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl text-sm font-bold outline-none transition-all ${bankErrors.bankAccountHolder ? 'border-rose-500' : 'border-slate-100 focus:border-blue-600'
+                                            }`}
                                         value={bankData.bankAccountHolder}
                                         onChange={e => {
                                             const val = e.target.value
@@ -500,7 +495,7 @@ const HotelProfileManager = () => {
                                                 .normalize("NFD")
                                                 .replace(/[\u0300-\u036f]/g, "")
                                                 .replace(/[^A-Z\s]/g, "");
-                                            setBankData({...bankData, bankAccountHolder: val});
+                                            setBankData({ ...bankData, bankAccountHolder: val });
                                         }}
                                         placeholder="NGUYEN VAN A"
                                         disabled={!canEdit}
@@ -511,14 +506,14 @@ const HotelProfileManager = () => {
 
                             <div className="mt-8 flex justify-end border-t border-slate-100 pt-6">
                                 {canEdit && (
-                                <button
-                                    onClick={handleUpdateBank}
-                                    disabled={bankLoading}
-                                    className="w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-900 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
-                                >
-                                    {bankLoading ? <Loader2 className="animate-spin" size={18}/> : <Save size={18}/>}
-                                    Lưu tài khoản ngân hàng
-                                </button>
+                                    <button
+                                        onClick={handleUpdateBank}
+                                        disabled={bankLoading}
+                                        className="w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-900 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                                    >
+                                        {bankLoading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                                        Lưu tài khoản ngân hàng
+                                    </button>
                                 )}
                             </div>
                         </div>
@@ -529,32 +524,47 @@ const HotelProfileManager = () => {
                     <div className="lg:col-span-4 space-y-6">
                         {/* Hình ảnh */}
                         <div className="bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-black text-[11px] uppercase tracking-widest text-slate-800">Album
-                                    ảnh ({existingImages.length})</h3>
+                            <div className="flex justify-between items-center mb-3">
+                                <h3 className="font-black text-[11px] uppercase tracking-widest text-slate-800">
+                                    Album ảnh ({existingImages.length + newImages.length})
+                                </h3>
+
                                 {canEdit && (
-                                    <label
-                                        className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center cursor-pointer hover:bg-blue-600 hover:text-white transition-all">
-                                        <input type="file" multiple className="hidden"
-                                               onChange={(e) => setNewImages([...newImages, ...Array.from(e.target.files)])}/>
-                                        <Upload size={18}/>
+                                    <label className="w-10 h-10 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center cursor-pointer hover:bg-blue-600 hover:text-white transition-all">
+                                        <input
+                                            type="file"
+                                            multiple
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={(e) => setNewImages([...newImages, ...Array.from(e.target.files)])}
+                                        />
+                                        <Upload size={18} />
                                     </label>
                                 )}
                             </div>
+
+                            {canEdit && existingImages.length === 0 && newImages.length === 0 && (
+                                <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3">
+                                    <p className="text-[11px] font-bold text-blue-700 leading-relaxed">
+                                        Ảnh đầu tiên sẽ được dùng làm ảnh bìa khách sạn. Vui lòng tải ảnh ngang tỉ lệ 5:2,
+                                        khuyến nghị 2400 × 960px để hiển thị rõ nét và tránh bị vỡ ảnh.
+                                    </p>
+                                </div>
+                            )}
                             <div className="grid grid-cols-2 gap-3">
                                 {existingImages.map(img => (
                                     <div key={img.id}
-                                         className={`relative aspect-square rounded-2xl overflow-hidden border-2 group ${formData.coverImageId === img.id ? 'border-blue-600' : 'border-slate-100'}`}>
-                                        <img src={img.url} className="w-full h-full object-cover"/>
+                                        className={`relative aspect-square rounded-2xl overflow-hidden border-2 group ${formData.coverImageId === img.id ? 'border-blue-600' : 'border-slate-100'}`}>
+                                        <img src={img.url} className="w-full h-full object-cover" />
                                         <div
                                             className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-                                            <button onClick={() => setFormData({...formData, coverImageId: img.id})}
-                                                    className="text-[9px] bg-blue-600 text-white px-2 py-1 rounded font-black uppercase">Ảnh
+                                            <button onClick={() => setFormData({ ...formData, coverImageId: img.id })}
+                                                className="text-[9px] bg-blue-600 text-white px-2 py-1 rounded font-black uppercase">Ảnh
                                                 bìa
                                             </button>
                                             <button onClick={() => handleDeleteExisting(img.id)}
-                                                    className="bg-rose-500 text-white p-1.5 rounded-lg hover:scale-110 transition-transform">
-                                                <X size={14}/></button>
+                                                className="bg-rose-500 text-white p-1.5 rounded-lg hover:scale-110 transition-transform">
+                                                <X size={14} /></button>
                                         </div>
                                         {formData.coverImageId === img.id && <div
                                             className="absolute top-2 left-2 bg-blue-600 text-white text-[8px] font-black px-2 py-0.5 rounded">BÌA</div>}
@@ -562,12 +572,12 @@ const HotelProfileManager = () => {
                                 ))}
                                 {newImages.map((file, idx) => (
                                     <div key={idx}
-                                         className="relative aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-blue-400">
+                                        className="relative aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-blue-400">
                                         <img src={URL.createObjectURL(file)}
-                                             className="w-full h-full object-cover opacity-60"/>
+                                            className="w-full h-full object-cover opacity-60" />
                                         <button onClick={() => setNewImages(newImages.filter((_, i) => i !== idx))}
-                                                className="absolute top-1 right-1 bg-slate-900 text-white rounded-full p-0.5">
-                                            <X size={10}/></button>
+                                            className="absolute top-1 right-1 bg-slate-900 text-white rounded-full p-0.5">
+                                            <X size={10} /></button>
                                     </div>
                                 ))}
                             </div>
@@ -578,7 +588,7 @@ const HotelProfileManager = () => {
                             className="rounded-[28px] p-6 text-white shadow-lg relative overflow-hidden transition-all duration-500 bg-[#0F172A] border border-white/5"
                         >
                             <div className="absolute -right-2 -top-2 opacity-5">
-                                <ShieldCheck size={120}/>
+                                <ShieldCheck size={120} />
                             </div>
 
                             <div className="relative z-10 flex flex-col gap-6">
@@ -602,19 +612,18 @@ const HotelProfileManager = () => {
                                         disabled={loadingHistory}
                                         className="p-3 bg-white/5 hover:bg-blue-600 rounded-2xl transition-all border border-white/10 group active:scale-95"
                                     >
-                                        {loadingHistory ? <Loader2 size={16} className="animate-spin"/> :
-                                            <Info size={16}/>}
+                                        {loadingHistory ? <Loader2 size={16} className="animate-spin" /> :
+                                            <Info size={16} />}
                                     </button>
                                 </div>
                                 <div className="flex items-center justify-between pt-4 border-t border-white/5">
                                     <div className="flex flex-col gap-1">
                                         <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Phân loại</span>
                                         <span
-                                            className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider w-fit ${
-                                                originalData?.commissionType === 'DEAL' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                                            className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider w-fit ${originalData?.commissionType === 'DEAL' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
                                                     originalData?.commissionType === 'HOTEL' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
                                                         'bg-slate-500/10 text-slate-400 border border-slate-500/20'
-                                            }`}>
+                                                }`}>
                                             {originalData?.commissionType === 'DEAL' ? 'Ưu đãi (Deal)' :
                                                 originalData?.commissionType === 'HOTEL' ? 'Riêng biệt' : 'Mặc định'}
                                         </span>
@@ -633,11 +642,11 @@ const HotelProfileManager = () => {
 
                         {/* PHẦN XÁC THỰC PHÁP LÝ */}
                         <div className="bg-slate-900 p-8 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
-                            <div className="absolute -right-4 -bottom-4 text-slate-800/30"><ShieldCheck size={100}/>
+                            <div className="absolute -right-4 -bottom-4 text-slate-800/30"><ShieldCheck size={100} />
                             </div>
                             <div className="flex justify-between items-center mb-6 relative z-10">
                                 <h3 className="text-[10px] font-black text-blue-400 uppercase tracking-widest flex items-center gap-2">
-                                    <CheckCircle2 size={16}/> Xác thực pháp lý
+                                    <CheckCircle2 size={16} /> Xác thực pháp lý
                                 </h3>
                                 {/* NÚT ĐIỀU HƯỚNG KYC */}
                                 {canEdit && (
@@ -645,16 +654,16 @@ const HotelProfileManager = () => {
                                         onClick={handleGoToKYC}
                                         className="flex items-center gap-1.5 text-[9px] font-black text-white bg-white/10 px-3 py-1.5 rounded-lg hover:bg-white/20 transition-all uppercase"
                                     >
-                                        <Edit3 size={12}/> Sửa KYC
+                                        <Edit3 size={12} /> Sửa KYC
                                     </button>
                                 )}
                             </div>
                             <div className="space-y-4 relative z-10">
-                                <ReadOnlyItem label="Mã số thuế" value={originalData?.verification?.taxCode}/>
+                                <ReadOnlyItem label="Mã số thuế" value={originalData?.verification?.taxCode} />
                                 <ReadOnlyItem label="Số giấy phép KD"
-                                              value={originalData?.verification?.businessLicenseNumber}/>
+                                    value={originalData?.verification?.businessLicenseNumber} />
                                 <ReadOnlyItem label="Người đại diện"
-                                              value={originalData?.verification?.representativeName}/>
+                                    value={originalData?.verification?.representativeName} />
                             </div>
                         </div>
 
@@ -664,7 +673,7 @@ const HotelProfileManager = () => {
                             <div className="flex items-center gap-3.5 mb-5">
                                 <div
                                     className="p-2 bg-blue-50 rounded-lg text-blue-600 shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
-                                    <FileText size={18}/>
+                                    <FileText size={18} />
                                 </div>
                                 <div className="flex flex-col min-w-0">
                                     <h3 className="text-[10px] font-black uppercase tracking-[0.1em] text-blue-600/80 mb-0.5">
@@ -694,7 +703,7 @@ const HotelProfileManager = () => {
                     </div>
                 </div>
             </div>
-            <ToastPortal ref={toast} autoClose={true} autoCloseTime={3000}/>
+            <ToastPortal ref={toast} autoClose={true} autoCloseTime={3000} />
             {/* MODAL PDF  */}
             {showPdfModal && (
                 <div
@@ -709,13 +718,13 @@ const HotelProfileManager = () => {
                                 title="Mở tab mới"
                                 className="p-2.5 bg-white/90 backdrop-blur-md text-slate-500 hover:text-blue-600 rounded-xl border border-slate-200 shadow-sm transition-all active:scale-95"
                             >
-                                <ExternalLink size={18}/>
+                                <ExternalLink size={18} />
                             </a>
                             <button
                                 onClick={() => setShowPdfModal(false)}
                                 className="p-2.5 bg-slate-900/90 backdrop-blur-md text-white hover:bg-red-500 rounded-xl shadow-lg transition-all active:scale-95"
                             >
-                                <X size={18}/>
+                                <X size={18} />
                             </button>
                         </div>
                         {/* Content View */}
@@ -727,10 +736,10 @@ const HotelProfileManager = () => {
                             />
                             {/* Background Loading */}
                             <div className="absolute inset-0 flex flex-col items-center justify-center z-0">
-                                <Loader2 size={32} className="animate-spin text-blue-600/20 mb-2"/>
+                                <Loader2 size={32} className="animate-spin text-blue-600/20 mb-2" />
                                 <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">
-                        Đang tải tài liệu...
-                    </span>
+                                    Đang tải tài liệu...
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -782,24 +791,24 @@ const HotelProfileManager = () => {
 
                                                 <div className="flex flex-col gap-2">
                                                     <div className="flex justify-between items-center">
-                                            <span className="text-[11px] font-black text-slate-900 tracking-tight">
-                                                {new Date(item.changedAt).toLocaleString('vi-VN', {
-                                                    hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
-                                                })}
-                                            </span>
+                                                        <span className="text-[11px] font-black text-slate-900 tracking-tight">
+                                                            {new Date(item.changedAt).toLocaleString('vi-VN', {
+                                                                hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric'
+                                                            })}
+                                                        </span>
                                                         <span className={`text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider border ${config.style}`}>
-                                                {config.label}
-                                            </span>
+                                                            {config.label}
+                                                        </span>
                                                     </div>
 
                                                     <div className="flex items-center gap-3 py-1">
-                                            <span className="text-[15px] font-bold text-slate-500">
-                                               {formatCommValue(item.oldValue, item.oldRateType)}
-                                            </span>
+                                                        <span className="text-[15px] font-bold text-slate-500">
+                                                            {formatCommValue(item.oldValue, item.oldRateType)}
+                                                        </span>
                                                         <ArrowRight size={14} className="text-slate-300" />
                                                         <span className="text-[20px] font-black text-blue-600 tracking-tighter">
-                                                {formatCommValue(item.newValue, item.newRateType)}
-                                            </span>
+                                                            {formatCommValue(item.newValue, item.newRateType)}
+                                                        </span>
                                                     </div>
 
                                                     <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100/50">
@@ -848,9 +857,8 @@ const InputField = ({ label, value, onChange, error, disabled }) => (
             value={value}
             disabled={disabled}
             onChange={e => onChange(e.target.value)}
-            className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl outline-none transition-all font-bold text-sm text-slate-700 ${
-                error ? 'border-rose-500 focus:border-rose-600' : 'border-slate-100 focus:border-blue-600'
-            }`}
+            className={`w-full px-5 py-3.5 bg-slate-50 border-2 rounded-2xl outline-none transition-all font-bold text-sm text-slate-700 ${error ? 'border-rose-500 focus:border-rose-600' : 'border-slate-100 focus:border-blue-600'
+                }`}
         />
         {error && <p className="text-[10px] text-rose-500 font-bold italic ml-2 tracking-tight">{error}</p>}
     </div>

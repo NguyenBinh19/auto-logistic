@@ -12,7 +12,7 @@ const MainLayout = () => {
             {/*<main className="flex-grow bg-slate-50">*/}
             {/*    <Outlet />*/}
             {/*</main>*/}
-            <HotelSection/>
+            {/* <HotelSection/> */}
             <Footer />
         </div>
     );

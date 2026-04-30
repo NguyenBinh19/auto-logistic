@@ -265,16 +265,16 @@ const RevenueReport = () => {
 
             {/* THẺ CHỈ SỐ KPI  */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <KPICard title="Doanh thu tháng" value={summary.totalRevenue || 0} unit="VNĐ" trend={summary.revenueGrowthPercent || 0} isUp={(summary.revenueGrowthPercent || 0) >= 0} />
-                <KPICard title="Công suất phòng theo tháng" value={summary.occupancyRate || 0} unit="%" trend={summary.occupancyGrowthPercent || 0} isUp={(summary.occupancyGrowthPercent || 0) >= 0} />
-                <KPICard title="ADR (Giá TB tháng)" value={summary.adr || 0} unit="VNĐ" trend={summary.adrGrowthPercent || 0} isUp={(summary.adrGrowthPercent || 0) >= 0} />
-                <KPICard title="RevPAR tháng" value={summary.revPar || 0} unit="VNĐ" trend={summary.revParGrowthPercent || 0} isUp={(summary.revParGrowthPercent || 0) >= 0} />
+                <KPICard title="Doanh thu " value={summary.totalRevenue || 0} unit="VNĐ" trend={summary.revenueGrowthPercent || 0} isUp={(summary.revenueGrowthPercent || 0) >= 0} />
+                <KPICard title="Công suất phòng " value={summary.occupancyRate || 0} unit="%" trend={summary.occupancyGrowthPercent || 0} isUp={(summary.occupancyGrowthPercent || 0) >= 0} />
+                <KPICard title="ADR (Giá Trung Bình)" value={summary.adr || 0} unit="VNĐ" trend={summary.adrGrowthPercent || 0} isUp={(summary.adrGrowthPercent || 0) >= 0} />
+                <KPICard title="RevPAR" value={summary.revPar || 0} unit="VNĐ" trend={summary.revParGrowthPercent || 0} isUp={(summary.revParGrowthPercent || 0) >= 0} />
             </div>
             {/* SECTION  */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between">
                     <div>
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Tổng đơn trong tháng</p>
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Tổng số đơn</p>
                         <h4 className="text-xl font-black text-slate-800">{summary.totalBookings} <span className="text-sm font-medium text-slate-700">Đơn</span></h4>
                     </div>
                     <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
@@ -284,7 +284,7 @@ const RevenueReport = () => {
 
                 <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between">
                     <div>
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Tỷ lệ hủy đơn trong tháng</p>
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Tỷ lệ hủy đơn</p>
                         <h4 className="text-xl font-black text-rose-600">
                             {summary.totalBookings > 0
                                 ? ((summary.cancelledBookings / summary.totalBookings) * 100).toFixed(1)
@@ -298,7 +298,7 @@ const RevenueReport = () => {
 
                 <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between">
                     <div>
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Đêm phòng đã bán (Tháng)</p>
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Đêm phòng đã bán</p>
                         <h4 className="text-xl font-black text-emerald-600">{summary.totalRoomNightsSold} / {summary.totalRoomNightsAvailable}</h4>
                     </div>
                     <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">

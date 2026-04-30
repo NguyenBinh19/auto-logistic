@@ -227,15 +227,15 @@ ORDER BY b.createdAt DESC
 
     // Payout Statement: Find completed & paid bookings not yet processed, up to periodEnd
     @Query("""
-    SELECT DISTINCT b FROM Booking b
-    LEFT JOIN FETCH b.bookingDetails
-    WHERE b.hotelId = :hotelId
-      AND b.bookingStatus = 'COMPLETED'
-      AND b.paymentStatus = 'PAID'
-      AND (b.payoutProcessed = false OR b.payoutProcessed IS NULL)
-      AND b.checkOutDate <= :periodEnd
-    ORDER BY b.checkOutDate ASC
-    """)
+        SELECT DISTINCT b FROM Booking b
+        LEFT JOIN FETCH b.bookingDetails
+        WHERE b.hotelId = :hotelId
+          AND b.bookingStatus IN ('COMPLETED', 'CANCELLED','NO-SHOW')
+          AND b.paymentStatus = 'PAID'
+          AND (b.payoutProcessed = false OR b.payoutProcessed IS NULL)
+          AND b.checkOutDate <= :periodEnd
+        ORDER BY b.checkOutDate ASC
+        """)
     List<Booking> findUnprocessedPaidBookingsByHotel(
             @Param("hotelId") Integer hotelId,
             @Param("periodEnd") LocalDate periodEnd
@@ -244,7 +244,7 @@ ORDER BY b.createdAt DESC
     // Payout Statement: Get all distinct hotelIds with unprocessed paid bookings up to periodEnd
     @Query("""
     SELECT DISTINCT b.hotelId FROM Booking b
-    WHERE b.bookingStatus = 'COMPLETED'
+    WHERE b.bookingStatus IN ('COMPLETED', 'CANCELLED','NO-SHOW')
       AND b.paymentStatus = 'PAID'
       AND (b.payoutProcessed = false OR b.payoutProcessed IS NULL)
       AND b.checkOutDate <= :periodEnd

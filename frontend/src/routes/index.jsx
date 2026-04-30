@@ -121,8 +121,17 @@ const AppRoutes = () => {
                 <Route path="/user-guide" element={<UserGuidePage />} />
                 <Route path="/regulation" element={<RegulationPage />} />
 
-                <Route path="/kyc-intro" element={<KYCIntroduction />} />
-                <Route path="/kyc/status" element={<VerificationStatusPage />} />
+                <Route path="/kyc-intro" element={
+                    <ProtectedRoute>
+                        <KYCIntroduction />
+                    </ProtectedRoute>
+                } />
+
+                <Route path="/kyc/status" element={
+                    <ProtectedRoute>
+                        <VerificationStatusPage />
+                    </ProtectedRoute>
+                } />
                 <Route path="/profile" element={
                     <ProtectedRoute>
                         <UserProfile />

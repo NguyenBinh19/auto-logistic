@@ -258,14 +258,14 @@ const Header = () => {
             <div className="w-full px-4 sm:px-8 lg:px-12 mx-auto">
                 <div className="flex justify-between items-center h-20">
 
-                    <Link to="/homepage" className="flex-shrink-0 flex items-center gap-2 group">
+                    <div className="flex-shrink-0 flex items-center gap-2 group cursor-default">
                         <div className="bg-blue-600 p-1.5 rounded-xl transition-transform group-hover:rotate-12">
-                            <Building2 className="text-white" size={24} strokeWidth={2.5} />
+                            <Building2 className="text-white" size={24} strokeWidth={2.5}/>
                         </div>
                         <span className="text-2xl font-black text-slate-800 tracking-tight">
                             HMS<span className="text-blue-600">-</span>B2B
                         </span>
-                    </Link>
+                    </div>
 
                     {/* DESKTOP NAV - Dành cho khách chưa đăng nhập */}
                     {!user && (

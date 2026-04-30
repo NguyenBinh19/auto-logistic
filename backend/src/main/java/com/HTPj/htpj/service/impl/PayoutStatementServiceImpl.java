@@ -121,8 +121,18 @@ public class PayoutStatementServiceImpl implements PayoutStatementService {
                 BigDecimal bookingRefund = booking.getRefundAmount() != null
                         ? booking.getRefundAmount() : BigDecimal.ZERO;
 
-                BigDecimal commissionAmount = calculateCommission(bookingGross, hotel);
-                BigDecimal netAmount = bookingGross.subtract(commissionAmount).subtract(bookingRefund);
+                BigDecimal commissionAmount;
+
+// Nếu finalAmount = refundAmount => hoàn tiền toàn bộ => không tính hoa hồng
+                if (bookingGross.compareTo(bookingRefund) == 0) {
+                    commissionAmount = BigDecimal.ZERO;
+                } else {
+                    commissionAmount = calculateCommission(bookingGross, hotel);
+                }
+
+                BigDecimal netAmount = bookingGross
+                        .subtract(commissionAmount)
+                        .subtract(bookingRefund);
 
                 int roomNights = booking.getNights() != null ? booking.getNights() : 0;
 

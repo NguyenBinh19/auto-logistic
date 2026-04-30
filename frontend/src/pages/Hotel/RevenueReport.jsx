@@ -12,13 +12,33 @@ import { revenueService } from '@/services/revenue.service';
 import { financialService } from '@/services/financial.service';
 import { toast } from 'react-hot-toast';
 
+const getDefaultDates = () => {
+    const now = new Date();
+    // Ngày đầu tháng: Năm hiện tại, Tháng hiện tại, ngày 01
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    // Ngày cuối tháng: Năm hiện tại, Tháng kế tiếp, ngày 0 (ngày 0 của tháng sau chính là ngày cuối của tháng này)
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+    // Chuyển sang định dạng YYYY-MM-DD để phù hợp với input type="date"
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    return {
+        start: formatDate(firstDay),
+        end: formatDate(lastDay)
+    };
+};
+
 const RevenueReport = () => {
     const [loading, setLoading] = useState(false);
     const [reportData, setReportData] = useState(null);
     const [decisionAlerts, setDecisionAlerts] = useState([]);
     const [strategicHacks, setStrategicHacks] = useState([]);
-    const [startDate, setStartDate] = useState("2026-03-01");
-    const [endDate, setEndDate] = useState("2026-03-31");
+    const defaultDates = getDefaultDates();
+    const [startDate, setStartDate] = useState(defaultDates.start);
+    const [endDate, setEndDate] = useState(defaultDates.end);
     const [granularity, setGranularity] = useState("DAILY"); // DAILY | WEEKLY | MONTHLY
     const [dateError, setDateError] = useState("");
     const MAX_DAILY_RANGE_DAYS = 365;
@@ -271,40 +291,51 @@ const RevenueReport = () => {
                 <KPICard title="RevPAR" value={summary.revPar || 0} unit="VNĐ" trend={summary.revParGrowthPercent || 0} isUp={(summary.revParGrowthPercent || 0) >= 0} />
             </div>
             {/* SECTION  */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-5xl">
+                {/* Thẻ: Tổng số đơn */}
+                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
                     <div>
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Tổng số đơn</p>
-                        <h4 className="text-xl font-black text-slate-800">{summary.totalBookings} <span className="text-sm font-medium text-slate-700">Đơn</span></h4>
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em] mb-1 group-hover:text-blue-600 transition-colors">
+                            Tổng số đơn
+                        </p>
+                        <div className="flex items-baseline gap-1.5">
+                            <h4 className="text-2xl font-black text-slate-800 tracking-tight">
+                                {summary.totalBookings?.toLocaleString('vi-VN') || 0}
+                            </h4>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase">Đơn</span>
+                        </div>
                     </div>
-                    <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
-                        <Calendar size={20} />
+                    <div
+                        className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
+                        <Calendar size={20}/>
                     </div>
                 </div>
-
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between">
+                {/* Thẻ: Tỷ lệ hủy đơn */}
+                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
                     <div>
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Tỷ lệ hủy đơn</p>
-                        <h4 className="text-xl font-black text-rose-600">
+                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em] mb-1 group-hover:text-rose-600 transition-colors">
+                            Tỷ lệ hủy đơn
+                        </p>
+                        <h4 className="text-2xl font-black text-rose-600 tracking-tight">
                             {summary.totalBookings > 0
-                                ? ((summary.cancelledBookings / summary.totalBookings) * 100).toFixed(1)
-                                : 0}%
+                                ? ((summary.cancelledBookings / summary.totalBookings) * 100).toFixed(2)
+                                : "0.00"}%
                         </h4>
                     </div>
-                    <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600">
-                        <AlertCircle size={20} />
+                    <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 shadow-inner">
+                        <AlertCircle size={20}/>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between">
-                    <div>
-                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Đêm phòng đã bán</p>
-                        <h4 className="text-xl font-black text-emerald-600">{summary.totalRoomNightsSold} / {summary.totalRoomNightsAvailable}</h4>
-                    </div>
-                    <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
-                        <Home size={20} />
-                    </div>
-                </div>
+                {/*<div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between">*/}
+                {/*    <div>*/}
+                {/*        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Đêm phòng đã bán</p>*/}
+                {/*        <h4 className="text-xl font-black text-emerald-600">{summary.totalRoomNightsSold} / {summary.totalRoomNightsAvailable}</h4>*/}
+                {/*    </div>*/}
+                {/*    <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">*/}
+                {/*        <Home size={20} />*/}
+                {/*    </div>*/}
+                {/*</div>*/}
             </div>
             {/* PHẦN GỢI Ý CHIẾN LƯỢC */}
             {!loading && granularity === 'MONTHLY' && strategicHacks.length > 0 && (
@@ -315,8 +346,8 @@ const RevenueReport = () => {
                                 key={index}
                                 className={`bg-white border border-slate-100 p-6 rounded-[2.5rem] shadow-sm flex items-start gap-4 transition-all hover:shadow-md hover:border-blue-100
                         ${strategicHacks.length === 1
-                                    ? 'w-full md:w-[450px]' 
-                                    : 'flex-1 min-w-[300px] max-w-[calc(33.333%-1rem)]' 
+                                    ? 'w-full md:w-[450px]'
+                                    : 'flex-1 min-w-[300px] max-w-[calc(33.333%-1rem)]'
                                 }
                     `}
                             >
@@ -325,11 +356,12 @@ const RevenueReport = () => {
                                         hack.type === 'danger' ? 'bg-rose-50 text-rose-600' :
                                             hack.type === 'success' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
                                 }`}>
-                                    <BarChart3 size={20} />
+                                    <BarChart3 size={20}/>
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <h4 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Gợi ý chiến lược</h4>
+                                        <h4 className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">Gợi
+                                            ý chiến lược</h4>
                                     </div>
                                     <h5 className="text-sm font-extrabold text-slate-800 leading-tight mb-2 truncate">
                                         {hack.title}

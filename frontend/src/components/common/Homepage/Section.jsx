@@ -127,8 +127,7 @@ const HomePage = () => {
 
     // 5. Hàm điều hướng cho 2 nút Agency/Hotel
     const handleRoleNav = (path) => {
-        if (isLoggedIn) navigate(path);
-        else navigate("/login");
+        navigate(path);
     };
 
     // Component con

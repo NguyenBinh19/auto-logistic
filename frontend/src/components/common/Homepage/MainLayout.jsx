@@ -92,7 +92,7 @@ const MainLayout = () => {
                 <>
                     <Header />
                     <Sections />
-                    <HotelSection />
+                    {/* <HotelSection /> */}
                     <Footer />
                 </>
             ) : (

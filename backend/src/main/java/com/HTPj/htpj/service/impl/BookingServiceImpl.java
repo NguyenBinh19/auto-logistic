@@ -498,6 +498,7 @@ public class BookingServiceImpl implements BookingService {
                             .agencyId(agency.getAgencyId())
                             .month(monthStr)
                             .totalAmount(BigDecimal.ZERO)
+                            .principalRemaining(BigDecimal.ZERO)
                             .createdAt(LocalDateTime.now())
                             .isPaid(false)
                             .build());
@@ -507,7 +508,6 @@ public class BookingServiceImpl implements BookingService {
             agencyBooking.setTotalAmount(
                     totalAmount
             );
-
             agencyBooking.setPrincipalRemaining(
                     finalAmountPaid.add(agencyBooking.getPrincipalRemaining())
             );

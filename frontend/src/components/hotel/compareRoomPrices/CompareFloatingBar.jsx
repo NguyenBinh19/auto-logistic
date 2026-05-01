@@ -2,16 +2,15 @@ import React, { useMemo } from 'react';
 import { useCompare } from '@/context/CompareContext.jsx';
 import { X, Star, ShieldCheck, MapPinned, Trash2, Info, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
+const DEFAULT_HOTEL_IMAGE = "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb";
 export default function CompareModal() {
     const { isModalOpen, setIsModalOpen, compareItems, clearAll, removeItem } = useCompare();
     const navigate = useNavigate();
-
     const specs = useMemo(() => [
 
         { label: "Hình ảnh & Đặt phòng", key: "action_area", type: "action" },
-        { label: "Hạng sao", key: "starRating", type: "star",  },
-        { label: "Thành phố", key: "city",  },
+        { label: "Hạng sao", key: "starRating", type: "star", },
+        { label: "Thành phố", key: "city", },
         { label: "Đánh giá (TB)", key: "avgRating", type: "rating" },
         { label: "Tổng đánh giá", key: "totalReviews", type: "text" },
         { label: "Tiện ích tiêu biểu", key: "amenities", type: "tags" },
@@ -24,7 +23,31 @@ export default function CompareModal() {
         const values = compareItems.map(h => JSON.stringify(h[key]));
         return new Set(values).size > 1;
     };
+    const getCoverImage = (images = []) => {
+        const normalizedImages = images
+            .map((img) => {
+                if (typeof img === "string") {
+                    return {
+                        id: img,
+                        url: img,
+                        isCover: false
+                    };
+                }
 
+                return {
+                    id: img.imageId || img.id,
+                    url: img.imageUrl || img.url,
+                    isCover: img.isCover === true
+                };
+            })
+            .filter(img => img.url);
+
+        const coverImage =
+            normalizedImages.find(img => img.isCover) ||
+            normalizedImages[0];
+
+        return coverImage?.url || DEFAULT_HOTEL_IMAGE;
+    };
     if (!isModalOpen) return null;
 
     return (
@@ -39,8 +62,10 @@ export default function CompareModal() {
                         </div>
                         <div>
                             <h2 className="text-2xl font-black text-[#003580] uppercase italic tracking-tighter">Bảng đối chiếu dịch vụ</h2>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase italic">Agency Manager Comparison Tool</p>
-                        </div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase italic">
+                                Công cụ so sánh khách sạn cho đại lý
+                            </p>                        
+                            </div>
                     </div>
                     <button onClick={() => setIsModalOpen(false)} className="w-12 h-12 flex items-center justify-center bg-slate-100 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-inner">
                         <X size={24} />
@@ -51,54 +76,54 @@ export default function CompareModal() {
                 <div className="flex-1 overflow-auto custom-scrollbar bg-white">
                     <table className="w-full border-separate border-spacing-0 table-fixed">
                         <thead>
-                        <tr>
-                            {/* Ô góc trên bên trái */}
-                            <th className="sticky top-0 left-0 z-[60] p-6 w-[220px] bg-slate-50 border-b-2 border-r border-slate-200 text-left">
-                                <span className="text-[11px] font-black uppercase text-[#003580] italic">Thông tin khách sạn</span>
-                            </th>
+                            <tr>
+                                {/* Ô góc trên bên trái */}
+                                <th className="sticky top-0 left-0 z-[60] p-6 w-[220px] bg-slate-50 border-b-2 border-r border-slate-200 text-left">
+                                    <span className="text-[11px] font-black uppercase text-[#003580] italic">Thông tin khách sạn</span>
+                                </th>
 
-                            {compareItems.map(hotel => (
-                                /* Tên khách sạn */
-                                <th key={hotel.hotelId} className="sticky top-0 z-50 p-6 bg-white border-b-2 border-l border-white min-w-[320px] text-left">
-                                    <div className="flex justify-between items-start gap-4">
+                                {compareItems.map(hotel => (
+                                    /* Tên khách sạn */
+                                    <th key={hotel.hotelId} className="sticky top-0 z-50 p-6 bg-white border-b-2 border-l border-white min-w-[320px] text-left">
+                                        <div className="flex justify-between items-start gap-4">
                                             <span className="text-blue-900 text-[13px] font-black uppercase leading-tight italic line-clamp-2">
                                                 {hotel.hotelName}
                                             </span>
-                                        <button
-                                            onClick={() => removeItem(hotel.hotelId)}
-                                            className="text-blue-300 hover:text-black transition-colors"
-                                        >
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
-                                </th>
-                            ))}
-                        </tr>
+                                            <button
+                                                onClick={() => removeItem(hotel.hotelId)}
+                                                className="text-blue-300 hover:text-black transition-colors"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </th>
+                                ))}
+                            </tr>
                         </thead>
 
                         <tbody>
-                        {specs.map((spec, idx) => {
-                            const highlightRow = isDifferent(spec.key);
-                            return (
-                                <tr key={idx} className={highlightRow ? 'bg-orange-50/30' : ''}>
-                                    {/* Cột tiêu chí bên trái (Sticky Left) */}
-                                    <td className="sticky left-0 z-40 p-6 bg-slate-50 border-b border-r border-slate-200 shadow-[2px_0_5px_rgba(0,0,0,0.03)] font-black text-[10px] uppercase text-slate-500 italic flex items-center gap-2">
-                                        {spec.icon} {spec.label}
-                                        {highlightRow && <Info size={12} className="text-orange-400" />}
-                                    </td>
+                            {specs.map((spec, idx) => {
+                                const highlightRow = isDifferent(spec.key);
+                                return (
+                                    <tr key={idx} className={highlightRow ? 'bg-orange-50/30' : ''}>
+                                        {/* Cột tiêu chí bên trái (Sticky Left) */}
+                                        <td className="sticky left-0 z-40 p-6 bg-slate-50 border-b border-r border-slate-200 shadow-[2px_0_5px_rgba(0,0,0,0.03)] font-black text-[10px] uppercase text-slate-500 italic flex items-center gap-2">
+                                            {spec.icon} {spec.label}
+                                            {highlightRow && <Info size={12} className="text-orange-400" />}
+                                        </td>
 
-                                    {/* Nội dung dữ liệu */}
-                                    {compareItems.map(hotel => (
-                                        <td key={hotel.hotelId} className="p-6 border-b border-l border-slate-100 align-top">
+                                        {/* Nội dung dữ liệu */}
+                                        {compareItems.map(hotel => (
+                                            <td key={hotel.hotelId} className="p-6 border-b border-l border-slate-100 align-top">
 
-                                            {/* Case 1: Khu vực Ảnh và Nút đặt phòng */}
-                                            {spec.type === "action" ? (
+                                                {/* Case 1: Khu vực Ảnh và Nút đặt phòng */}
+                                                {spec.type === "action" ? (
                                                     <div className="space-y-4">
                                                         <div className="h-48 rounded-2xl overflow-hidden shadow-md">
                                                             <img
-                                                                src={hotel.images?.[0] || "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb"}
+                                                                src={getCoverImage(hotel.images)}
                                                                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                                                                alt="hotel"
+                                                                alt={hotel.hotelName || "Khách sạn"}
                                                             />
                                                         </div>
                                                         <button
@@ -113,45 +138,45 @@ export default function CompareModal() {
                                                     </div>
                                                 )
 
-                                                /* Case 2: Hạng sao */
-                                                : spec.type === "star" ? (
+                                                    /* Case 2: Hạng sao */
+                                                    : spec.type === "star" ? (
                                                         <div className="flex text-yellow-400">
                                                             {[...Array(Number(hotel[spec.key]) || 0)].map((_, i) => (
-                                                                <Star key={i} size={14} fill="currentColor"/>
+                                                                <Star key={i} size={14} fill="currentColor" />
                                                             ))}
                                                         </div>
                                                     )
 
-                                                    /* Case 3: Đánh giá */
-                                                    : spec.type === "rating" ? (
+                                                        /* Case 3: Đánh giá */
+                                                        : spec.type === "rating" ? (
                                                             <div className="text-lg font-black text-[#003580]">
                                                                 {hotel[spec.key] > 0 ? hotel[spec.key].toFixed(1) : "N/A"}
                                                                 <span className="text-[10px] font-bold text-slate-300 ml-1">/ 5.0</span>
                                                             </div>
                                                         )
 
-                                                        /* Case 4: Tiện ích */
-                                                        : spec.type === "tags" ? (
+                                                            /* Case 4: Tiện ích */
+                                                            : spec.type === "tags" ? (
                                                                 <div className="flex flex-wrap gap-1.5">
                                                                     {(hotel[spec.key] || []).map(tag => (
                                                                         <span key={tag} className="px-2 py-1 bg-slate-100 text-slate-600 text-[9px] font-black rounded uppercase">
-                                                                {tag}
-                                                            </span>
+                                                                            {tag}
+                                                                        </span>
                                                                     ))}
                                                                 </div>
                                                             )
 
-                                                            /* Case 5: Văn bản dài   */
-                                                            : (
-                                                                <div className="text-[13px] font-bold text-slate-600 leading-relaxed break-words whitespace-normal">
-                                                                    {hotel[spec.key] || "---"}
-                                                                </div>
-                                                            )}
-                                        </td>
-                                    ))}
-                                </tr>
-                            );
-                        })}
+                                                                /* Case 5: Văn bản dài   */
+                                                                : (
+                                                                    <div className="text-[13px] font-bold text-slate-600 leading-relaxed break-words whitespace-normal">
+                                                                        {hotel[spec.key] || "---"}
+                                                                    </div>
+                                                                )}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

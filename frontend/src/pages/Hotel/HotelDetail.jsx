@@ -97,7 +97,7 @@ export default function HotelDetailPage() {
                 userId: decoded.userId || decoded.sub,
             };
 
-            console.log("Decoded token:", decoded);
+            // console.log("Decoded token:", decoded);
 
             roles = decoded.scope || [];
         } catch (err) {

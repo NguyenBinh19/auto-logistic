@@ -139,4 +139,11 @@ public class RankController {
                 .build();
     }
 
+    @GetMapping("/current")
+    public ApiResponse<List<RankPublicResponse>> getActiveRanks() {
+        return ApiResponse.<List<RankPublicResponse>>builder()
+                .result(rankService.getActiveRanks())
+                .build();
+    }
+
 }

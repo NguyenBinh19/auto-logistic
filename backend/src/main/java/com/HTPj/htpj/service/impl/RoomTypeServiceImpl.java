@@ -226,6 +226,7 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 //    @Transactional
     public RoomTypeDetailResponse updateRoomType(Integer roomTypeId, UpdateRoomTypeRequest request, MultipartFile[] newImages
     ) {
+
         RoomType roomType = roomTypeRepository.findById(roomTypeId)
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_TYPE_NOT_FOUND));
 

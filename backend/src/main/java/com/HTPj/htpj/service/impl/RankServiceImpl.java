@@ -612,4 +612,18 @@ public class RankServiceImpl implements RankService {
                 .build()
         ).toList();
     }
+    @Override
+    public List<RankPublicResponse> getActiveRanks() {
+
+        List<Rank> ranks = rankRepository.findByIsActiveTrueOrderByPriorityAsc();
+
+        return ranks.stream()
+                .map(rank -> RankPublicResponse.builder()
+                        .rankName(rank.getRankName())
+                        .maintainMinRevenue(rank.getMaintainMinRevenue())
+                        .upgradeMinTotalRevenue(rank.getUpgradeMinTotalRevenue())
+                        .creditLimit(rank.getCreditLimit())
+                        .build())
+                .toList();
+    }
 }

@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class HotelImageResponse {
     private Integer imageId;
     private String imageUrl;
+    private Boolean isCover;
+    private Integer sortOrder;
 }

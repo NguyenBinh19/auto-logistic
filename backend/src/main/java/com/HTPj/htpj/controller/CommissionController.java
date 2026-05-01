@@ -4,10 +4,7 @@ import com.HTPj.htpj.dto.request.ApiResponse;
 import com.HTPj.htpj.dto.request.commission.CreateCommissionRequest;
 import com.HTPj.htpj.dto.request.commission.DeleteCommissionRequest;
 import com.HTPj.htpj.dto.request.commission.UpdateCommissionRequest;
-import com.HTPj.htpj.dto.response.commision.CommissionDetailResponse;
-import com.HTPj.htpj.dto.response.commision.CommissionLogResponse;
-import com.HTPj.htpj.dto.response.commision.CommissionResponse;
-import com.HTPj.htpj.dto.response.commision.HotelUsingDealResponse;
+import com.HTPj.htpj.dto.response.commision.*;
 import com.HTPj.htpj.service.CommissionService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +93,13 @@ public class CommissionController {
     public ApiResponse<List<CommissionLogResponse>> getMyHotelLogs() {
         return ApiResponse.<List<CommissionLogResponse>>builder()
                 .result(commissionService.getHotelCommissionLogs())
+                .build();
+    }
+
+    @GetMapping("/current")
+    public ApiResponse<CommissionPublicResponse> getCurrentCommission() {
+        return ApiResponse.<CommissionPublicResponse>builder()
+                .result(commissionService.getCurrentCommission())
                 .build();
     }
 

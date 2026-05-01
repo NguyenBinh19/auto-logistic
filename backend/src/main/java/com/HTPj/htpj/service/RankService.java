@@ -35,4 +35,7 @@ public interface RankService {
     List<RankHistoryResponse> getAllRankHistories();
 
     List<RankHistoryResponse> getMyAgencyRankHistories();
+
+    List<RankPublicResponse> getActiveRanks();
+
 }

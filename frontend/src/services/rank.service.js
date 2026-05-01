@@ -165,6 +165,17 @@ const getMyAgencyRankHistories = async () => {
     }
 };
 
+// 16. Lấy danh sách tất cả hạng tại thời điểm đó
+const getCurrentRanks = async () => {
+    try {
+        const response = await api.get(`/ranks/current`);
+        return response.data;
+    } catch (error) {
+        console.error("Get Current Ranks Error:", error);
+        throw error;
+    }
+};
+
 export const rankService = {
     createRank,
     updateRank,
@@ -181,4 +192,5 @@ export const rankService = {
     changeRank,
     getAllRankHistories,
     getMyAgencyRankHistories,
+    getCurrentRanks
 };

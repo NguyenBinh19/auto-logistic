@@ -134,9 +134,9 @@ const HotelBookingDetail = () => {
                             </div>
                             {booking.roomDetails.map((room, idx) => (
                                 <div key={idx} className="bg-white p-8 rounded-[2.5rem] border border-white shadow-xl flex flex-col md:flex-row gap-8">
-                                    <div className="w-full md:w-40 h-40 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 border border-slate-100 flex-shrink-0">
-                                        <Hotel size={48} />
-                                    </div>
+                                    {/*<div className="w-full md:w-40 h-40 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 border border-slate-100 flex-shrink-0">*/}
+                                    {/*    <Hotel size={48} />*/}
+                                    {/*</div>*/}
                                     <div className="flex-1">
                                         <div className="flex justify-between items-start mb-4">
                                             <div>

@@ -3,10 +3,7 @@ package com.HTPj.htpj.service.impl;
 import com.HTPj.htpj.dto.request.commission.CreateCommissionRequest;
 import com.HTPj.htpj.dto.request.commission.DeleteCommissionRequest;
 import com.HTPj.htpj.dto.request.commission.UpdateCommissionRequest;
-import com.HTPj.htpj.dto.response.commision.CommissionDetailResponse;
-import com.HTPj.htpj.dto.response.commision.CommissionLogResponse;
-import com.HTPj.htpj.dto.response.commision.CommissionResponse;
-import com.HTPj.htpj.dto.response.commision.HotelUsingDealResponse;
+import com.HTPj.htpj.dto.response.commision.*;
 import com.HTPj.htpj.dto.response.hotel.HotelListResponse;
 import com.HTPj.htpj.entity.*;
 import com.HTPj.htpj.exception.AppException;
@@ -25,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -562,6 +560,40 @@ public class CommissionServiceImpl implements CommissionService {
         );
 
         return logs;
+    }
+
+    @Override
+    public CommissionPublicResponse getCurrentCommission() {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Commission> validDeals = commissionRepository.findValidDeal(now);
+
+        Commission selectedCommission;
+
+        if (!validDeals.isEmpty()) {
+            if (validDeals.size() == 1) {
+                selectedCommission = validDeals.get(0);
+            } else {
+                selectedCommission = validDeals.stream()
+                        .max(Comparator.comparing(Commission::getCreatedAt))
+                        .orElse(null);
+            }
+        }
+        //  DEFAULT
+        else {
+            selectedCommission = commissionRepository.findDefault()
+                    .orElseThrow(() -> new RuntimeException("Default commission not found"));
+        }
+
+        if (selectedCommission == null) {
+            throw new RuntimeException("Commission not found");
+        }
+
+        return CommissionPublicResponse.builder()
+                .rateType(selectedCommission.getRateType())
+                .commissionValue(selectedCommission.getCommissionValue())
+                .build();
     }
 
 }

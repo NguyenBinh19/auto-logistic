@@ -3,10 +3,7 @@ package com.HTPj.htpj.service;
 import com.HTPj.htpj.dto.request.commission.CreateCommissionRequest;
 import com.HTPj.htpj.dto.request.commission.DeleteCommissionRequest;
 import com.HTPj.htpj.dto.request.commission.UpdateCommissionRequest;
-import com.HTPj.htpj.dto.response.commision.CommissionDetailResponse;
-import com.HTPj.htpj.dto.response.commision.CommissionLogResponse;
-import com.HTPj.htpj.dto.response.commision.CommissionResponse;
-import com.HTPj.htpj.dto.response.commision.HotelUsingDealResponse;
+import com.HTPj.htpj.dto.response.commision.*;
 
 import java.util.List;
 
@@ -34,4 +31,6 @@ public interface CommissionService {
 
     //hotel
     List<CommissionLogResponse> getHotelCommissionLogs();
+
+    CommissionPublicResponse getCurrentCommission();
 }

@@ -110,6 +110,17 @@ const getMyHotelLogs = async () => {
     }
 };
 
+// 11. Lấy danh sách commission tại thời điểm đó
+const getCurrentCommissions = async () => {
+    try {
+        const response = await api.get(`/commissions/current`);
+        return response.data;
+    } catch (error) {
+        console.error("Get Current Commissions Error:", error);
+        throw error;
+    }
+};
+
 export const commissionService = {
     createCommission,
     deleteCommission,
@@ -121,4 +132,5 @@ export const commissionService = {
     setDefaultCommission,
     getAllLogs,
     getMyHotelLogs,
+    getCurrentCommissions
 };

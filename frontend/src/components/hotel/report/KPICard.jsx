@@ -9,7 +9,7 @@ const KPICard = ({ title, value, unit, trend, isUp }) => {
 
     // Nếu BE trả về null (do chưa có dữ liệu kỳ trước), hiển thị 0.0%
     const hasTrend = trend !== null && trend !== undefined;
-    const trendValue = hasTrend ? Math.abs(trend).toFixed(1) : "0.0";
+    const trendValue = hasTrend ? Math.abs(trend).toFixed(2) : "0.00";
 
     return (
         <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-md transition-all group">

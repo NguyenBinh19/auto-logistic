@@ -10,6 +10,7 @@ import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import lombok.RequiredArgsConstructor;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Configuration;
 public class TemporalConfig {
 
     private final RoomHoldRepository roomHoldRepository;
-
 
     @Bean
     public WorkflowServiceStubs workflowServiceStubs() {
@@ -49,7 +49,7 @@ public class TemporalConfig {
 
         factory.start();
 
-        System.out.println("Temporal Worker started");
+        System.out.println(" Temporal Worker started");
 
         return factory;
     }

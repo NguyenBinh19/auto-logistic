@@ -94,6 +94,7 @@ import BookingDetailDemo from "@/pages/Demo/Agency/BookingDetailDemo.jsx";
 import ViewAuditLogs from "@/pages/Admin/ViewAuditLogs.jsx"
 import DisputeManagement from "@/pages/Admin/DisputeManage.jsx";
 import PayoutStatementOverview from "@/pages/Admin/PayoutStatementOverview.jsx";
+import HotelAllBooking from "@/pages/Hotel/HotelAllBooking.jsx"
 
 import PartnerAuditLog from "@/pages/Admin/PartnerAuditLog.jsx";
 import GlobalChatWidget from "../components/chat/GlobalChatWidget.jsx";
@@ -191,6 +192,8 @@ const AppRoutes = () => {
                     <Route path="chat-page" element={<GlobalChatWidget />} />
                     <Route path="revenue-report" element={<RevenueReport/>} />
                     <Route path="payout-state" element={<PayoutStatement/>} />
+                    <Route path="view-all-booking" element={<HotelAllBooking/>} />
+                    <Route path="view-all-booking/:bookingCode" element={<HotelBookingDetail />} />
                     <Route path="view-booking/:bookingCode" element={<HotelBookingDetail />} />
                 </Route>
 

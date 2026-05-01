@@ -18,12 +18,13 @@ const InputField = ({ label, name, value, onChange, type = "text", placeholder, 
     </div>
 );
 
-const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
+const RoomTypeDetailModal = ({ roomId, onClose, onSuccess, onError }) => {
     const fileInputRef = useRef(null);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [tagInput, setTagInput] = useState("");
+    const [isLocked, setIsLocked] = useState(false);
 
     const [form, setForm] = useState({
         roomTitle: "", description: "", basePrice: 0,
@@ -51,7 +52,9 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
             setIsLoadingData(true);
             const res = await roomTypeService.getRoomTypeDetail(roomId);
             const data = res.result || res;
-
+            if (data.isEditable === false) {
+                setIsLocked(true);
+            }
             setForm({
                 roomTitle: data.roomTitle || "",
                 description: data.description || "",
@@ -155,7 +158,7 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
             alert("Sức chứa người lớn tối thiểu là 1!");
             return;
         }
-
+        if (isLocked) return;
         const isConfirmed = window.confirm("Bạn có chắc chắn muốn cập nhật các thay đổi cho hạng phòng này không?");
 
         if (!isConfirmed) return;
@@ -172,7 +175,13 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
             handleClose();
             if (onSuccess) onSuccess();
         } catch (err) {
-            alert("Cập nhật thất bại!");
+            const errorCode = err?.response?.data?.code;
+            if (errorCode === 2004) {
+                setIsLocked(true); // Khóa form ngay lập tức
+                alert("KHÔNG THỂ CHỈNH SỬA: Hạng phòng này đang có đơn đặt phòng hoặc đang trong quá trình vận hành. Vui lòng kiểm tra lại lịch phòng!");
+            } else {
+                alert("Cập nhật thất bại: " + (err?.response?.data?.message || "Lỗi hệ thống"));
+            }
         } finally {
             setIsSaving(false);
         }
@@ -193,36 +202,48 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                 </div>
 
                 <div className="p-6 overflow-y-auto custom-scrollbar">
+                    {isLocked && (
+                        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3 text-amber-800 animate-in slide-in-from-top-2">
+                            <div className="p-2 bg-amber-100 rounded-lg">
+                                <span className="text-xl">⚠️</span>
+                            </div>
+                            <div>
+                                <p className="text-sm font-bold">Chế độ xem giới hạn</p>
+                                <p className="text-xs opacity-80">Hạng phòng này đang có giao dịch thực tế, bạn không thể thay đổi thông tin cấu hình.</p>
+                            </div>
+                        </div>
+                    )}
                     {isLoadingData ? (
                         <div className="flex flex-col items-center justify-center py-20 text-slate-500">
                             <Loader2 className="animate-spin mb-3 text-blue-600" size={32} />
                             <span>Đang lấy dữ liệu mới nhất...</span>
                         </div>
                     ) : (
-                        <div className="space-y-8">
+                        <div className={`space-y-8 ${isLocked ? 'pointer-events-none opacity-75' : ''}`}>
                             {/* THÔNG TIN CƠ BẢN */}
                             <section>
                                 <h3 className="text-sm font-bold text-slate-900 mb-4">Thông tin cơ bản</h3>
                                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                                     <InputField label="Tên hạng phòng" name="roomTitle" value={form.roomTitle}
-                                                onChange={handleChange}/>
+                                                onChange={handleChange} disabled={isLocked}/>
                                     <InputField label="Số lượng phòng" name="totalRooms" type="number"
-                                                value={form.totalRooms} onChange={handleChange}/>
+                                                value={form.totalRooms} onChange={handleChange} disabled={isLocked}/>
                                     <InputField label="Sức chứa người lớn" name="maxAdults" type="number"
-                                                value={form.maxAdults} onChange={handleChange}/>
+                                                value={form.maxAdults} onChange={handleChange} disabled={isLocked}/>
                                     <InputField label="Sức chứa trẻ em" name="maxChildren" type="number"
-                                                value={form.maxChildren} onChange={handleChange}/>
+                                                value={form.maxChildren} onChange={handleChange} disabled={isLocked}/>
                                     <InputField label="Kích thước (m²)" name="roomArea" type="number"
-                                                value={form.roomArea} onChange={handleChange}/>
+                                                value={form.roomArea} onChange={handleChange} disabled={isLocked}/>
                                     <InputField
                                         label="Loại giường"
                                         name="bedType"
                                         value={form.bedType}
                                         onChange={handleChange}
                                         placeholder="Ví dụ: 1 giường King, 2 giường đơn..."
+                                        disabled={isLocked}
                                     />
                                     <InputField label="Giá gốc (VNĐ/Đêm)" name="basePrice" type="number"
-                                                value={form.basePrice} onChange={handleChange} className="col-span-2"/>
+                                                value={form.basePrice} onChange={handleChange} disabled={isLocked} className="col-span-2"/>
                                 </div>
                             </section>
 
@@ -249,6 +270,7 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                                             onChange={(e) => setTagInput(e.target.value)}
                                             onKeyDown={handleAddTag}
                                             placeholder="Thêm tiện ích (nhấn Enter để thêm)..."
+                                            disabled={isLocked}
                                             className="w-full pl-3 pr-10 py-2 text-sm bg-white border border-slate-200 rounded-lg outline-none focus:border-blue-400"
                                         />
                                         <button type="button" onClick={() => handleAddTag()}
@@ -276,6 +298,7 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                             </section>
 
                             {/* THƯ VIỆN ẢNH */}
+                            {!isLocked && (
                             <section>
                                 <h3 className="text-sm font-bold text-slate-900 mb-4 uppercase tracking-wider">Thư viện
                                     ảnh</h3>
@@ -323,6 +346,7 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                                     ))}
                                 </div>
                             </section>
+                            )}
                         </div>
                     )}
                 </div>
@@ -332,6 +356,7 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                             className="px-5 py-2 rounded-lg bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200 text-sm">Hủy
                         bỏ
                     </button>
+                    {!isLocked && (
                     <button
                         onClick={handleUpdate}
                         disabled={isSaving || isLoadingData}
@@ -340,6 +365,7 @@ const RoomTypeDetailModal = ({ roomId, onClose, onSuccess }) => {
                         {isSaving ? <Loader2 className="animate-spin" size={16}/> : <Save size={16}/>}
                         Lưu thay đổi
                     </button>
+                    )}
                 </div>
             </div>
         </div>

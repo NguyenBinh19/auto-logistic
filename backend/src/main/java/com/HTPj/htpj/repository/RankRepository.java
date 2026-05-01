@@ -39,4 +39,6 @@ public interface RankRepository extends JpaRepository<Rank, Integer> {
 """)
     List<Rank> findAllActiveOrderByPriorityDesc();
 
+    List<Rank> findByIsActiveTrueOrderByPriorityAsc();
+
 }

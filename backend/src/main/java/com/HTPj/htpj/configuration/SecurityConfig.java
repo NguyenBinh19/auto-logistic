@@ -52,6 +52,8 @@ public class SecurityConfig {
             "/transaction-history/**",
             "/pdf-documents",
             "/pdf-documents/**",
+            "/ranks/current",
+            "/commissions/current",
     };
 
     @Value("${app.frontend-url:http://localhost:5173}")

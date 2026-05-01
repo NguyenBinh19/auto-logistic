@@ -9,35 +9,51 @@ import {
 import Header from "@/components/common/Homepage/Header.jsx";
 import Footer from "@/components/common/Homepage/Footer.jsx";
 import { rankService } from '@/services/rank.service.js';
+import { commissionService } from '@/services/commission.service.js';
 
 const UserGuidePage = () => {
     const [activeTab, setActiveTab] = useState("agency");
     const [openFaq, setOpenFaq] = useState(0);
 
     const [ranks, setRanks] = useState([]);
+    const [commissions, setCommissions] = useState([]);
     const [loadingRanks, setLoadingRanks] = useState(false);
+    const [loadingCommissions, setLoadingCommissions] = useState(false);
 
-    // 1. Gọi API lấy danh sách Rank
     useEffect(() => {
         const fetchRanks = async () => {
             setLoadingRanks(true);
             try {
-                const res = await rankService.getAllRanks();
-                setRanks(res.result || res.data || []);
+                const res = await rankService.getCurrentRanks();
+                setRanks(res.result || []);
             } catch (error) {
                 console.error("Lỗi khi tải danh sách hạng:", error);
             } finally {
                 setLoadingRanks(false);
             }
         };
+
+        const fetchCommissions = async () => {
+            setLoadingCommissions(true);
+            try {
+                const res = await commissionService.getCurrentCommissions();
+                setCommissions(res.result || []);
+            } catch (error) {
+                console.error("Lỗi khi tải danh sách hoa hồng:", error);
+            } finally {
+                setLoadingCommissions(false);
+            }
+        };
+
         fetchRanks();
+        fetchCommissions();
     }, []);
 
     const formatVND = (amount) => {
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
             currency: 'VND',
-        }).format(amount);
+        }).format(amount || 0);
     };
     /* =========================
        AGENCY GUIDE (ĐẠI LÝ)
@@ -173,32 +189,34 @@ const UserGuidePage = () => {
                         Hệ thống HMS-B2B áp dụng cơ chế quản lý tài chính linh hoạt dựa trên phân hạng đối tác. Mỗi cấp bậc Rank sẽ tương ứng với các đặc quyền về hạn mức và tín dụng khác nhau. Hiện tại, hệ thống đang áp dụng các hạng mục hiện hành như sau:
                     </p>
 
-                    {/* Hiển thị danh sách Rank */}
-                    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <p className="text-xs text-slate-500 italic">
+                        Dưới đây là các thông số phân hạng đối tác đang áp dụng hiện hành:
+                    </p>
+
+                    <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto shadow-sm">
                         {loadingRanks ? (
                             <div className="p-6 flex justify-center items-center gap-3 text-slate-400">
-                                <RefreshCcw size={18} className="animate-spin" /> Đang tải danh sách hạng...
+                                <RefreshCcw size={18} className="animate-spin" /> Đang tải dữ liệu...
                             </div>
                         ) : (
-                            <div className="divide-y divide-slate-100">
-                                {ranks.map((rank) => (
-                                    <div key={rank.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
-                                                <Trophy size={20} />
-                                            </div>
-                                            <div>
-                                                <h5 className="font-bold text-slate-800 text-sm">{rank.rankName}</h5>
-                                                <p className="text-xs text-slate-500">{rank.description || "Hạng đối tác"}</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Hạn mức tối đa</span>
-                                            <span className="text-blue-600 font-extrabold text-sm">{formatVND(rank.creditLimit)}</span>
-                                        </div>
-                                    </div>
+                            <table className="w-full text-[13px] text-left">
+                                <thead className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase text-[10px]">
+                                <tr>
+                                    <th className="px-4 py-3">Hạng</th>
+                                    <th className="px-4 py-3">Duy trì</th>
+                                    <th className="px-4 py-3">Hạn mức</th>
+                                </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                {ranks.map((rank, index) => (
+                                    <tr key={index} className="hover:bg-slate-50/50">
+                                        <td className="px-4 py-3 font-bold text-blue-600">{rank.rankName}</td>
+                                        <td className="px-4 py-3 text-slate-600">{formatVND(rank.maintainMinRevenue)}</td>
+                                        <td className="px-4 py-3 font-semibold text-slate-900">{formatVND(rank.creditLimit)}</td>
+                                    </tr>
                                 ))}
-                            </div>
+                                </tbody>
+                            </table>
                         )}
                     </div>
 
@@ -221,42 +239,51 @@ const UserGuidePage = () => {
             a: (
                 <div className="space-y-4">
                     <p>
-                        Để đảm bảo tính minh bạch và bền vững trong quan hệ hợp tác, HMS-B2B áp dụng cơ chế tính phí hoa hồng linh hoạt dựa trên phân loại dịch vụ và quy mô của từng đối tác khách sạn. Hiện tại, các mức phí đang được áp dụng là:
+                        Để đảm bảo tính minh bạch và bền vững trong quan hệ hợp tác, HMS-B2B áp dụng cơ chế tính phí hoa hồng linh hoạt dựa trên phân loại dịch vụ và quy mô của từng đối tác khách sạn. Hiện tại, mức phí đang được áp dụng là:
                     </p>
 
-                    {/* BẢNG HOA HỒNG MINH HỌA */}
-                    <div className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-100 text-[11px] font-black uppercase text-slate-500 tracking-wider">
-                            <tr>
-                                <th className="px-4 py-3">Loại dịch vụ</th>
-                                <th className="px-4 py-3 text-right">Mức phí hoa hồng</th>
-                            </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-200">
-                            <tr className="hover:bg-white transition-colors">
-                                <td className="px-4 py-3 font-medium text-slate-700">Đặt phòng khách sạn tiêu chuẩn</td>
-                                <td className="px-4 py-3 text-right text-blue-600 font-bold">10% - 15%</td>
-                            </tr>
-                            <tr className="hover:bg-white transition-colors">
-                                <td className="px-4 py-3 font-medium text-slate-700">Dịch vụ Tour & Trải nghiệm</td>
-                                <td className="px-4 py-3 text-right text-blue-600 font-bold">12%</td>
-                            </tr>
-                            <tr className="hover:bg-white transition-colors">
-                                <td className="px-4 py-3 font-medium text-slate-700">Gói Combo (Phòng + Vé máy bay)</td>
-                                <td className="px-4 py-3 text-right text-blue-600 font-bold">8%</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    {/* HIỂN THỊ HOA HỒNG TỪ API */}
+                    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        {loadingCommissions ? (
+                            <div className="p-6 flex justify-center items-center gap-3 text-slate-400">
+                                <RefreshCcw size={18} className="animate-spin" /> Đang tải dữ liệu hoa hồng...
+                            </div>
+                        ) : commissions ? (
+                            <div className="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                                <h5 className="font-bold text-slate-800 text-base mb-3 tracking-tight">
+                                    Mức hoa hồng hiện tại
+                                </h5>
+                                <div className="flex flex-wrap items-baseline gap-2 pt-3 border-t border-slate-100">
+                                    <span className="text-sm text-slate-500">
+                                        Đang áp dụng hiện tại:
+                                    </span>
+                                    <span className="text-2xl font-black text-blue-600 tracking-tight">
+                                        {commissions.rateType === 'FIXED'
+                                            ? new Intl.NumberFormat('vi-VN').format(commissions.commissionValue) + ' đ'
+                                            : `${commissions.commissionValue}%`
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="p-6 text-center text-slate-400 text-sm">
+                                Chưa có dữ liệu hoa hồng được thiết lập.
+                            </div>
+                        )}
                     </div>
 
                     <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
                         <h6 className="text-blue-800 font-bold text-[13px] mb-1 flex items-center gap-2">
-                            <AlertCircle size={14} /> Lưu ý quan trọng:
+                            Lưu ý quan trọng:
                         </h6>
                         <ul className="text-[12px] text-blue-700/80 space-y-1.5 list-disc pl-4">
-                            <li>Chi tiết về các điều khoản, quyền lợi và nghĩa vụ cụ thể, quý đối tác vui lòng tham khảo trong <b>Hợp đồng điện tử</b> và Chính sách đối tác được niêm yết trên hệ thống của chúng tôi.</li>
-                            <li>Mức phí hoa hồng có thể được điều chỉnh theo từng giai đoạn tùy theo chính sách thị trường.</li>
+                            <li>Chi tiết về các điều khoản, quyền lợi và nghĩa vụ cụ thể, quý đối tác vui lòng tham khảo
+                                trong <b>Hợp đồng điện tử</b> và Chính sách đối tác được niêm yết trên hệ thống của
+                                chúng tôi.
+                            </li>
+                            <li>Mức phí hoa hồng có thể được điều chỉnh theo từng giai đoạn tùy theo chính sách thị
+                                trường.
+                            </li>
                         </ul>
                     </div>
                 </div>

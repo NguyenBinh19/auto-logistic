@@ -291,39 +291,46 @@ const RevenueReport = () => {
                 <KPICard title="RevPAR" value={summary.revPar || 0} unit="VNĐ" trend={summary.revParGrowthPercent || 0} isUp={(summary.revParGrowthPercent || 0) >= 0} />
             </div>
             {/* SECTION  */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-5xl">
-                {/* Thẻ: Tổng số đơn */}
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
-                    <div>
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em] mb-1 group-hover:text-blue-600 transition-colors">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 w-full">
+                {/* 1. Thẻ: Tổng số đơn */}
+                <div
+                    className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group w-full">
+                    <div className="flex-1">
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-1 group-hover:text-blue-600 transition-colors">
                             Tổng số đơn
                         </p>
                         <div className="flex items-baseline gap-1.5">
                             <h4 className="text-2xl font-black text-slate-800 tracking-tight">
                                 {summary.totalBookings?.toLocaleString('vi-VN') || 0}
                             </h4>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase">Đơn</span>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase">Đơn</span>
                         </div>
                     </div>
                     <div
-                        className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
-                        <Calendar size={20}/>
+                        className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner shrink-0">
+                        <Calendar size={24}/>
                     </div>
                 </div>
-                {/* Thẻ: Tỷ lệ hủy đơn */}
-                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group">
-                    <div>
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.15em] mb-1 group-hover:text-rose-600 transition-colors">
+
+                {/* 2. Thẻ: Tỷ lệ hủy đơn */}
+                <div
+                    className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-all group w-full">
+                    <div className="flex-1">
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em] mb-1 group-hover:text-rose-600 transition-colors">
                             Tỷ lệ hủy đơn
                         </p>
-                        <h4 className="text-2xl font-black text-rose-600 tracking-tight">
-                            {summary.totalBookings > 0
-                                ? ((summary.cancelledBookings / summary.totalBookings) * 100).toFixed(2)
-                                : "0.00"}%
-                        </h4>
+                        <div className="flex items-baseline gap-1.5">
+                            <h4 className="text-2xl font-black text-rose-600 tracking-tight">
+                                {summary.totalBookings > 0
+                                    ? ((summary.cancelledBookings / summary.totalBookings) * 100).toFixed(2)
+                                    : "0.00"}
+                            </h4>
+                            <span className="text-[10px] font-bold text-rose-400 uppercase">%</span>
+                        </div>
                     </div>
-                    <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 shadow-inner">
-                        <AlertCircle size={20}/>
+                    <div
+                        className="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 shadow-inner shrink-0">
+                        <AlertCircle size={24}/>
                     </div>
                 </div>
 

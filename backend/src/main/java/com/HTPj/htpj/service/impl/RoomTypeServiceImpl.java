@@ -229,6 +229,11 @@ public class RoomTypeServiceImpl implements RoomTypeService {
         RoomType roomType = roomTypeRepository.findById(roomTypeId)
                 .orElseThrow(() -> new AppException(ErrorCode.ROOM_TYPE_NOT_FOUND));
 
+        long activeBookingCount = bookingDetailRepository.countActiveBookingByRoomType(roomTypeId);
+
+        if (activeBookingCount > 0) {
+            throw new AppException(ErrorCode.ROOM_TYPE_IN_USE);}
+
         roomType.setRoomTitle(request.getRoomTitle());
         roomType.setDescription(request.getDescription());
         roomType.setBasePrice(request.getBasePrice());

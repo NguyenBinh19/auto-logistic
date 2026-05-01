@@ -353,6 +353,14 @@ const ManageRoomTypes = () => {
                             fetchRoomTypes();
                             setSelectedRoomId(null);
                         }}
+                        onError={(errorMsg) => {
+                            if (toastRef.current) {
+                                toastRef.current.addMessage({
+                                    mode: "error",
+                                    message: errorMsg
+                                });
+                            }
+                        }}
                     />
                 )}
             </div>

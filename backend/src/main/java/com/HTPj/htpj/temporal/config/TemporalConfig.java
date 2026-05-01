@@ -10,6 +10,8 @@ import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,12 +21,15 @@ public class TemporalConfig {
 
     private final RoomHoldRepository roomHoldRepository;
 
+    @Value("${temporal.connection.target}")
+    private String target;
 
     @Bean
     public WorkflowServiceStubs workflowServiceStubs() {
         return WorkflowServiceStubs.newInstance(
                 WorkflowServiceStubsOptions.newBuilder()
-                        .setTarget("hms-temporal:7233")
+                        .setTarget(target)
+//                        .setTarget("hms-temporal:7233")
                         .build()
         );
     }
@@ -49,7 +54,7 @@ public class TemporalConfig {
 
         factory.start();
 
-        System.out.println("Temporal Worker started");
+        System.out.println("✅ Temporal Worker started");
 
         return factory;
     }

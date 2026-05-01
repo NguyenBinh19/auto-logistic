@@ -1,31 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    BookOpen,
-    UserPlus,
-    CheckCircle,
-    CreditCard,
-    Search,
-    HelpCircle,
-    ChevronDown,
-    ArrowRight,
-    MousePointer2,
-    Settings,
-    FileText,
-    Hotel,
-    CalendarCheck,
-    ShieldCheck,
-    BarChart3,
-    Clock,
-    Wallet
+    BookOpen, UserPlus, CheckCircle, CreditCard, Search,
+    HelpCircle, ChevronDown, ArrowRight, MousePointer2,
+    Settings, FileText, Hotel, CalendarCheck, ShieldCheck,
+    BarChart3, Clock, Wallet, Trophy, RefreshCcw, AlertCircle
 } from 'lucide-react';
 
 import Header from "@/components/common/Homepage/Header.jsx";
 import Footer from "@/components/common/Homepage/Footer.jsx";
+import { rankService } from '@/services/rank.service.js';
 
 const UserGuidePage = () => {
     const [activeTab, setActiveTab] = useState("agency");
     const [openFaq, setOpenFaq] = useState(0);
 
+    const [ranks, setRanks] = useState([]);
+    const [loadingRanks, setLoadingRanks] = useState(false);
+
+    // 1. Gọi API lấy danh sách Rank
+    useEffect(() => {
+        const fetchRanks = async () => {
+            setLoadingRanks(true);
+            try {
+                const res = await rankService.getAllRanks();
+                setRanks(res.result || res.data || []);
+            } catch (error) {
+                console.error("Lỗi khi tải danh sách hạng:", error);
+            } finally {
+                setLoadingRanks(false);
+            }
+        };
+        fetchRanks();
+    }, []);
+
+    const formatVND = (amount) => {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+        }).format(amount);
+    };
     /* =========================
        AGENCY GUIDE (ĐẠI LÝ)
     ==========================*/
@@ -150,21 +163,105 @@ const UserGuidePage = () => {
 
     const faqs = [
         {
-            q: "Làm thế nào để nâng hạn mức tín dụng?",
-            a: "Các đại lý có lịch sử thanh toán đúng hạn trong vòng 3 tháng liên tiếp sẽ được hệ thống tự động xem xét nâng hạn mức. Bạn cũng có thể gửi yêu cầu trực tiếp qua Dashboard để được xét duyệt nhanh."
+            q: "Làm thế nào để nâng hạn mức tín dụng và quy định phân hạng?",
+            a: (
+                <div className="space-y-4">
+                    <p>
+                        Các đại lý có lịch sử thanh toán đúng hạn trong vòng <b>06 tháng liên tiếp</b> sẽ được hệ thống tự động xem xét nâng hạn mức. Ngoài ra, quý đối tác cũng có thể gửi yêu cầu trực tiếp qua hệ thống để được xét duyệt nhanh chóng.
+                    </p>
+                    <p>
+                        Hệ thống HMS-B2B áp dụng cơ chế quản lý tài chính linh hoạt dựa trên phân hạng đối tác. Mỗi cấp bậc Rank sẽ tương ứng với các đặc quyền về hạn mức và tín dụng khác nhau. Hiện tại, hệ thống đang áp dụng các hạng mục hiện hành như sau:
+                    </p>
+
+                    {/* Hiển thị danh sách Rank */}
+                    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        {loadingRanks ? (
+                            <div className="p-6 flex justify-center items-center gap-3 text-slate-400">
+                                <RefreshCcw size={18} className="animate-spin" /> Đang tải danh sách hạng...
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-slate-100">
+                                {ranks.map((rank) => (
+                                    <div key={rank.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
+                                                <Trophy size={20} />
+                                            </div>
+                                            <div>
+                                                <h5 className="font-bold text-slate-800 text-sm">{rank.rankName}</h5>
+                                                <p className="text-xs text-slate-500">{rank.description || "Hạng đối tác"}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Hạn mức tối đa</span>
+                                            <span className="text-blue-600 font-extrabold text-sm">{formatVND(rank.creditLimit)}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <p className="text-[13px] text-slate-400 italic bg-slate-100 p-3 rounded-lg border-l-4 border-slate-300">
+                        Lưu ý: Các hạn mức tín dụng có thể thay đổi tùy theo tình hình kinh doanh và thời điểm cụ thể để đảm bảo quyền lợi tối ưu cho cả hai bên.
+                    </p>
+                </div>
+            )
         },
         {
             q: "Chính sách hoàn hủy phòng được quy định như thế nào?",
-            a: "Chính sách hoàn hủy phụ thuộc vào từng khách sạn và hạng phòng cụ thể. Thông tin này luôn được hiển thị minh bạch tại bước xác nhận đặt phòng trước khi bạn nhấn nút 'Đặt ngay'."
-        },
-        {
-            q: "Tôi có thể xuất hóa đơn VAT cho từng booking không?",
-            a: "Hoàn toàn được. Hệ thống HMS-B2B tích hợp hóa đơn điện tử, bạn có thể đăng ký thông tin xuất hóa đơn trong phần quản lý tài khoản hoặc yêu cầu ngay khi booking hoàn tất."
+            a: "Chính sách hoàn hủy phụ thuộc vào từng thời điểm cụ thể. Thông tin này luôn được hiển thị minh bạch tại bước xác nhận hủy phòng trước khi bạn nhấn nút 'Hủy'."
         },
         {
             q: "Thời gian xử lý đối soát giữa Khách sạn và Hệ thống là bao lâu?",
             a: "Việc đối soát thường diễn ra vào ngày 01 đến ngày 05 hàng tháng. Tiền phòng sẽ được thanh toán cho khách sạn theo chu kỳ thỏa thuận trong hợp đồng hợp tác."
-        }
+        },
+        {
+            q: "Chính sách Hoa hồng dành cho đối tác Khách sạn được tính như thế nào?",
+            a: (
+                <div className="space-y-4">
+                    <p>
+                        Để đảm bảo tính minh bạch và bền vững trong quan hệ hợp tác, HMS-B2B áp dụng cơ chế tính phí hoa hồng linh hoạt dựa trên phân loại dịch vụ và quy mô của từng đối tác khách sạn. Hiện tại, các mức phí đang được áp dụng là:
+                    </p>
+
+                    {/* BẢNG HOA HỒNG MINH HỌA */}
+                    <div className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <table className="w-full text-sm text-left">
+                            <thead className="bg-slate-100 text-[11px] font-black uppercase text-slate-500 tracking-wider">
+                            <tr>
+                                <th className="px-4 py-3">Loại dịch vụ</th>
+                                <th className="px-4 py-3 text-right">Mức phí hoa hồng</th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-200">
+                            <tr className="hover:bg-white transition-colors">
+                                <td className="px-4 py-3 font-medium text-slate-700">Đặt phòng khách sạn tiêu chuẩn</td>
+                                <td className="px-4 py-3 text-right text-blue-600 font-bold">10% - 15%</td>
+                            </tr>
+                            <tr className="hover:bg-white transition-colors">
+                                <td className="px-4 py-3 font-medium text-slate-700">Dịch vụ Tour & Trải nghiệm</td>
+                                <td className="px-4 py-3 text-right text-blue-600 font-bold">12%</td>
+                            </tr>
+                            <tr className="hover:bg-white transition-colors">
+                                <td className="px-4 py-3 font-medium text-slate-700">Gói Combo (Phòng + Vé máy bay)</td>
+                                <td className="px-4 py-3 text-right text-blue-600 font-bold">8%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl">
+                        <h6 className="text-blue-800 font-bold text-[13px] mb-1 flex items-center gap-2">
+                            <AlertCircle size={14} /> Lưu ý quan trọng:
+                        </h6>
+                        <ul className="text-[12px] text-blue-700/80 space-y-1.5 list-disc pl-4">
+                            <li>Chi tiết về các điều khoản, quyền lợi và nghĩa vụ cụ thể, quý đối tác vui lòng tham khảo trong <b>Hợp đồng điện tử</b> và Chính sách đối tác được niêm yết trên hệ thống của chúng tôi.</li>
+                            <li>Mức phí hoa hồng có thể được điều chỉnh theo từng giai đoạn tùy theo chính sách thị trường.</li>
+                        </ul>
+                    </div>
+                </div>
+            )
+        },
     ];
 
     const steps = activeTab === "agency" ? stepsAgency : stepsHotel;
@@ -298,9 +395,9 @@ const UserGuidePage = () => {
                                         </button>
                                         {openFaq === index && (
                                             <div className="mt-3 p-4 bg-slate-50 rounded-xl">
-                                                <p className="text-sm text-slate-500 leading-relaxed">
+                                                <div className="text-sm text-slate-500 leading-relaxed">
                                                     {faq.a}
-                                                </p>
+                                                </div>
                                             </div>
                                         )}
                                     </div>

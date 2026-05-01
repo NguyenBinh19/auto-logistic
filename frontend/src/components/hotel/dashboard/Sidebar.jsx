@@ -1,8 +1,9 @@
 import { useLocation, Link } from "react-router-dom";
 import {
-    Home, Hotel, Tags, Package, CalendarDays,
+    Home, Hotel, Tags, Package, CalendarDays, ClipboardCheck,
     LineChart, TicketPercent, Wallet, Bell, MessageSquare, Building2, Users, StarHalf, MessageCircle
 } from "lucide-react";
+import React from "react";
 
 const Sidebar = () => {
     const location = useLocation();
@@ -21,6 +22,7 @@ const Sidebar = () => {
         { icon: <LineChart size={20} />, label: "ĐỊNH GIÁ TỰ ĐỘNG", path: "/hotel/dynamic-pricing", hideForStaff: true, },
         { icon: <TicketPercent size={20} />, label: "QUẢN LÝ MÃ GIẢM GIÁ", path: "/hotel/coupons", hideForStaff: true, },
         { icon: <LineChart size={20} />, label: "BÁO CÁO DOANH THU", path: "/hotel/revenue-report" },
+        { icon: <ClipboardCheck size={20} />, label: "QUẢN LÝ ĐẶT PHÒNG", path: "/hotel/view-all-booking" },
         { icon: <Wallet size={20} />, label: "TÀI CHÍNH & THANH TOÁN", path: "/hotel/payout-state", hideForStaff: true, },
         { icon: <Bell size={20} />, label: "QUẦY LỄ TÂN", path: "/hotel/front-desk" },
         // { icon: <MessageSquare size={20} />, label: "TRUNG TÂM TRÒ CHUYỆN", path: "/hotel/chat" },

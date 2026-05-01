@@ -284,11 +284,48 @@ export default function HotelDetailPage() {
             setIsExtending(false);
         }
     };
-    const gallery =
-        hotel?.images?.length > 0
-            ? hotel.images
-            : ["https://pix8.agoda.net/hotelImages/186/186135/186135_17083113400050872001.jpg"];
-    if (!hotel) return <div className="flex justify-center items-center h-screen"><div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div></div>;
+    if (!hotel) {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    const normalizedImages = (hotel.images || [])
+        .map((img) => {
+            if (typeof img === "string") {
+                return {
+                    id: img,
+                    url: img,
+                    isCover: false,
+                    sortOrder: 0
+                };
+            }
+
+            return {
+                id: img.imageId || img.id,
+                url: img.imageUrl || img.url,
+                isCover: img.isCover === true,
+                sortOrder: img.sortOrder || 0
+            };
+        })
+        .filter(img => img.url);
+
+    const coverImage =
+        normalizedImages.find(img => img.isCover) ||
+        normalizedImages[0];
+
+    const coverImageUrl = coverImage?.url || DEFAULT_HOTEL_IMAGE;
+
+    const galleryImages =
+        normalizedImages.length > 0
+            ? normalizedImages.map(img => img.url)
+            : [DEFAULT_HOTEL_IMAGE];
+
+    const previewImages = normalizedImages
+        .filter(img => img.id !== coverImage?.id)
+        .slice(0, 4);
 
     const handleNegotiation = async () => {
         try {
@@ -360,22 +397,23 @@ export default function HotelDetailPage() {
                         {/* IMAGE AREA */}
                         <div className="relative aspect-[5/2] bg-slate-200">
                             <img
-                                src={hotel.images?.[0] || DEFAULT_HOTEL_IMAGE}
+                                src={coverImageUrl}
                                 className="w-full h-full object-cover cursor-pointer"
-                                alt="Hotel"
+                                alt={hotel.hotelName || "Hotel"}
                                 onClick={() => setOpenGallery(true)}
                             />
 
                             {/* FLOATING GALLERY CARD */}
-                            {hotel.images?.length > 1 && (
+                            {previewImages.length > 0 && (
                                 <div className="absolute right-6 bottom-6 bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-3 w-[220px]">
                                     <div className="grid grid-cols-2 gap-2">
-                                        {hotel.images.slice(1, 5).map((img, i) => (
+                                        {previewImages.map((img, i) => (
                                             <img
-                                                key={i}
-                                                src={img}
+                                                key={img.id || i}
+                                                src={img.url}
                                                 onClick={() => setOpenGallery(true)}
                                                 className="h-20 w-full object-cover rounded-xl cursor-pointer hover:opacity-90 transition"
+                                                alt={`Hotel preview ${i + 1}`}
                                             />
                                         ))}
                                     </div>
@@ -424,7 +462,7 @@ export default function HotelDetailPage() {
                     </section>
                     {openGallery && (
                         <GalleryModal
-                            images={gallery}
+                            images={galleryImages}
                             onClose={() => setOpenGallery(false)}
                         />
                     )}

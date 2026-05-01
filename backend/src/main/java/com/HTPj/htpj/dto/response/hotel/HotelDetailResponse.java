@@ -23,7 +23,7 @@ public class HotelDetailResponse {
 
     private Integer starRating;
 
-    private List<String> images;
+    private List<HotelImageResponse> images;
     private List<String> amenities;
 
     private Double avgRating;

@@ -33,9 +33,29 @@ const HotelCard = ({ hotel, isSuggested = false }) => {
         }
     };
 
-    const coverImg = (hotel.images && hotel.images.length > 0 && hotel.images[0])
-        ? hotel.images[0]
-        : DEFAULT_HOTEL_IMAGE;
+    const normalizedImages = (hotel.images || [])
+    .map((img) => {
+        if (typeof img === "string") {
+            return {
+                id: img,
+                url: img,
+                isCover: false
+            };
+        }
+
+        return {
+            id: img.imageId || img.id,
+            url: img.imageUrl || img.url,
+            isCover: img.isCover === true
+        };
+    })
+    .filter(img => img.url);
+
+const coverImage =
+    normalizedImages.find(img => img.isCover) ||
+    normalizedImages[0];
+
+const coverImg = coverImage?.url || DEFAULT_HOTEL_IMAGE;
 
     const starCount = hotel.starRating || 0;
     const formattedRating = (hotel.avgRating != null && hotel.avgRating > 0)

@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.nio.charset.StandardCharsets;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -86,7 +86,7 @@ public class FinancialExportServiceImpl implements FinancialExportService {
 
     private ExportResponse exportRevenueExcel(RevenueReportResponse report, String baseName) {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Revenue Report");
+            Sheet sheet = workbook.createSheet("Báo cáo doanh thu");
 
             // Header style
             CellStyle headerStyle = workbook.createCellStyle();
@@ -97,30 +97,30 @@ public class FinancialExportServiceImpl implements FinancialExportService {
             // Summary section
             int rowIdx = 0;
             Row titleRow = sheet.createRow(rowIdx++);
-            titleRow.createCell(0).setCellValue("Revenue Report");
+            titleRow.createCell(0).setCellValue("BÁO CÁO DOANH THU");
 
             rowIdx++; // blank line
             Row sumHead = sheet.createRow(rowIdx++);
-            createHeaderCell(sumHead, 0, "Metric", headerStyle);
-            createHeaderCell(sumHead, 1, "Value", headerStyle);
+            createHeaderCell(sumHead, 0, "Chỉ số", headerStyle);
+            createHeaderCell(sumHead, 1, "Giá trị", headerStyle);
 
             RevenueReportResponse.RevenueSummary s = report.getSummary();
-            addSummaryRow(sheet, rowIdx++, "Total Revenue", s.getTotalRevenue());
-            addSummaryRow(sheet, rowIdx++, "Total Bookings", BigDecimal.valueOf(s.getTotalBookings()));
-            addSummaryRow(sheet, rowIdx++, "Room Nights Sold", BigDecimal.valueOf(s.getTotalRoomNightsSold()));
-            addSummaryRow(sheet, rowIdx++, "Occupancy Rate (%)", BigDecimal.valueOf(s.getOccupancyRate()));
-            addSummaryRow(sheet, rowIdx++, "ADR", s.getAdr());
-            addSummaryRow(sheet, rowIdx++, "RevPAR", s.getRevPar());
+            addSummaryRow(sheet, rowIdx++, "Tổng doanh thu", s.getTotalRevenue());
+            addSummaryRow(sheet, rowIdx++, "Tổng số đơn đặt phòng", BigDecimal.valueOf(s.getTotalBookings()));
+            addSummaryRow(sheet, rowIdx++, "Số đêm phòng đã bán", BigDecimal.valueOf(s.getTotalRoomNightsSold()));
+            addSummaryRow(sheet, rowIdx++, "Tỷ lệ lấp đầy (%)", BigDecimal.valueOf(s.getOccupancyRate()));
+            addSummaryRow(sheet, rowIdx++, "Giá phòng trung bình (ADR)", s.getAdr());
+            addSummaryRow(sheet, rowIdx++, "Doanh thu/phòng khả dụng (RevPAR)", s.getRevPar());
 
             rowIdx += 2;
 
             // Trend data
             Row trendHeader = sheet.createRow(rowIdx++);
-            createHeaderCell(trendHeader, 0, "Period", headerStyle);
-            createHeaderCell(trendHeader, 1, "Revenue", headerStyle);
-            createHeaderCell(trendHeader, 2, "Bookings", headerStyle);
-            createHeaderCell(trendHeader, 3, "Room Nights Sold", headerStyle);
-            createHeaderCell(trendHeader, 4, "Occupancy %", headerStyle);
+            createHeaderCell(trendHeader, 0, "Kỳ báo cáo", headerStyle);
+            createHeaderCell(trendHeader, 1, "Doanh thu", headerStyle);
+            createHeaderCell(trendHeader, 2, "Số đơn đặt phòng", headerStyle);
+            createHeaderCell(trendHeader, 3, "Số đêm phòng đã bán", headerStyle);
+            createHeaderCell(trendHeader, 4, "Tỷ lệ lấp đầy (%)", headerStyle);
 
             for (RevenueReportResponse.RevenueTrendItem item : report.getTrend()) {
                 Row row = sheet.createRow(rowIdx++);
@@ -155,7 +155,7 @@ public class FinancialExportServiceImpl implements FinancialExportService {
 
             // Title
             Font titleFont = new Font(Font.HELVETICA, 16, Font.BOLD);
-            document.add(new Paragraph("Revenue Report", titleFont));
+            document.add(new Paragraph("BÁO CÁO DOANH THU", titleFont));
             document.add(new Paragraph(" "));
 
             // Summary table
@@ -163,19 +163,19 @@ public class FinancialExportServiceImpl implements FinancialExportService {
             PdfPTable summaryTable = new PdfPTable(2);
             summaryTable.setWidthPercentage(50);
             summaryTable.setHorizontalAlignment(Element.ALIGN_LEFT);
-            addPdfHeaderRow(summaryTable, "Metric", "Value");
-            addPdfRow(summaryTable, "Total Revenue", formatDecimal(s.getTotalRevenue()));
-            addPdfRow(summaryTable, "Total Bookings", String.valueOf(s.getTotalBookings()));
-            addPdfRow(summaryTable, "Occupancy Rate", s.getOccupancyRate() + "%");
-            addPdfRow(summaryTable, "ADR", formatDecimal(s.getAdr()));
-            addPdfRow(summaryTable, "RevPAR", formatDecimal(s.getRevPar()));
+            addPdfHeaderRow(summaryTable, "Chỉ số", "Giá trị");
+            addPdfRow(summaryTable, "Tổng doanh thu", formatDecimal(s.getTotalRevenue()));
+            addPdfRow(summaryTable, "Tổng số đơn đặt phòng", String.valueOf(s.getTotalBookings()));
+            addPdfRow(summaryTable, "Tỷ lệ lấp đầy", s.getOccupancyRate() + "%");
+            addPdfRow(summaryTable, "Giá phòng trung bình (ADR)", formatDecimal(s.getAdr()));
+            addPdfRow(summaryTable, "Doanh thu/phòng khả dụng (RevPAR)", formatDecimal(s.getRevPar()));
             document.add(summaryTable);
             document.add(new Paragraph(" "));
 
             // Trend table
             PdfPTable trendTable = new PdfPTable(5);
             trendTable.setWidthPercentage(100);
-            addPdfHeaderRow(trendTable, "Period", "Revenue", "Bookings", "Room Nights", "Occupancy %");
+            addPdfHeaderRow(trendTable, "Kỳ báo cáo", "Doanh thu", "Số đơn", "Số đêm phòng", "Tỷ lệ lấp đầy (%)");
 
             for (RevenueReportResponse.RevenueTrendItem item : report.getTrend()) {
                 trendTable.addCell(item.getPeriod());
@@ -200,7 +200,7 @@ public class FinancialExportServiceImpl implements FinancialExportService {
 
     private ExportResponse exportRevenueCsv(RevenueReportResponse report, String baseName) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Period,Revenue,Bookings,Room Nights Sold,Occupancy %\n");
+        sb.append("Kỳ báo cáo,Doanh thu,Số đơn đặt phòng,Số đêm phòng đã bán,Tỷ lệ lấp đầy (%)\n");
         for (RevenueReportResponse.RevenueTrendItem item : report.getTrend()) {
             sb.append(item.getPeriod()).append(",")
                     .append(formatDecimal(item.getRevenue())).append(",")
@@ -212,7 +212,7 @@ public class FinancialExportServiceImpl implements FinancialExportService {
         return ExportResponse.builder()
                 .fileName(baseName + ".csv")
                 .contentType("text/csv")
-                .data(sb.toString().getBytes())
+                .data(("\uFEFF" + sb).getBytes(StandardCharsets.UTF_8))
                 .build();
     }
 
@@ -248,7 +248,7 @@ public class FinancialExportServiceImpl implements FinancialExportService {
 
     private ExportResponse exportPayoutExcel(List<PayoutStatement> statements, String baseName) {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Payout List");
+            Sheet sheet = workbook.createSheet("Danh sách chi trả");
 
             CellStyle headerStyle = workbook.createCellStyle();
             org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
@@ -257,8 +257,17 @@ public class FinancialExportServiceImpl implements FinancialExportService {
 
             int rowIdx = 0;
             Row header = sheet.createRow(rowIdx++);
-            String[] cols = {"Statement Code", "Hotel ID", "Period Start", "Period End",
-                    "Gross Revenue", "Commission", "Refunds", "Net Payout", "Status"};
+            String[] cols = {
+                    "Mã sao kê",
+                    "Mã khách sạn",
+                    "Ngày bắt đầu kỳ",
+                    "Ngày kết thúc kỳ",
+                    "Tổng doanh thu",
+                    "Hoa hồng",
+                    "Hoàn tiền",
+                    "Số tiền thực nhận",
+                    "Trạng thái"
+            };
             for (int i = 0; i < cols.length; i++) {
                 createHeaderCell(header, i, cols[i], headerStyle);
             }
@@ -299,12 +308,20 @@ public class FinancialExportServiceImpl implements FinancialExportService {
             document.open();
 
             Font titleFont = new Font(Font.HELVETICA, 16, Font.BOLD);
-            document.add(new Paragraph("Payout Statement Report", titleFont));
+            document.add(new Paragraph("BÁO CÁO SAO KÊ CHI TRẢ", titleFont));
             document.add(new Paragraph(" "));
 
             PdfPTable table = new PdfPTable(7);
             table.setWidthPercentage(100);
-            addPdfHeaderRow(table, "Code", "Hotel", "Period", "Gross", "Commission", "Net Payout", "Status");
+            addPdfHeaderRow(table,
+                    "Mã sao kê",
+                    "Khách sạn",
+                    "Kỳ chi trả",
+                    "Tổng doanh thu",
+                    "Hoa hồng",
+                    "Thực nhận",
+                    "Trạng thái"
+            );
 
             for (PayoutStatement s : statements) {
                 table.addCell(s.getStatementCode());
@@ -330,7 +347,7 @@ public class FinancialExportServiceImpl implements FinancialExportService {
 
     private ExportResponse exportPayoutCsv(List<PayoutStatement> statements, String baseName) {
         StringBuilder sb = new StringBuilder();
-        sb.append("Statement Code,Hotel ID,Period Start,Period End,Gross Revenue,Commission,Refunds,Net Payout,Status\n");
+        sb.append("Mã sao kê,Mã khách sạn,Ngày bắt đầu kỳ,Ngày kết thúc kỳ,Tổng doanh thu,Hoa hồng,Hoàn tiền,Số tiền thực nhận,Trạng thái\n");
         for (PayoutStatement s : statements) {
             sb.append(s.getStatementCode()).append(",")
                     .append(s.getHotelId()).append(",")
@@ -346,7 +363,7 @@ public class FinancialExportServiceImpl implements FinancialExportService {
         return ExportResponse.builder()
                 .fileName(baseName + ".csv")
                 .contentType("text/csv")
-                .data(sb.toString().getBytes())
+                .data(("\uFEFF" + sb).getBytes(StandardCharsets.UTF_8))
                 .build();
     }
 

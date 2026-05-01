@@ -89,10 +89,15 @@ public class HotelServiceImpl implements HotelService {
                 .findByHotelIdAndStatus(hotelId, "ACTIVE")
                 .orElseThrow(() -> new AppException(ErrorCode.HOTEL_NOT_FOUND));
 
-        List<String> images = hotelImageRepository
+        List<HotelImageResponse> images = hotelImageRepository
                 .findByHotelHotelIdOrderBySortOrderAsc(hotelId)
                 .stream()
-                .map(HotelImage::getImageUrl)
+                .map(img -> HotelImageResponse.builder()
+                        .imageId(img.getImageId())
+                        .imageUrl(img.getImageUrl())
+                        .isCover(Boolean.TRUE.equals(img.getIsCover()))
+                        .sortOrder(img.getSortOrder())
+                        .build())
                 .toList();
 
         Double avgRating = hotelReviewRepository.getAvgRating(hotelId);
@@ -130,10 +135,17 @@ public class HotelServiceImpl implements HotelService {
         List<HotelImage> images =
                 hotelImageRepository.findByHotelHotelIdInOrderBySortOrderAsc(hotelIds);
 
-        Map<Integer, List<String>> imageMap = images.stream()
+        Map<Integer, List<HotelImageResponse>> imageMap = images.stream()
                 .collect(Collectors.groupingBy(
                         img -> img.getHotel().getHotelId(),
-                        Collectors.mapping(HotelImage::getImageUrl, Collectors.toList())
+                        Collectors.mapping(img -> HotelImageResponse.builder()
+                                        .imageId(img.getImageId())
+                                        .imageUrl(img.getImageUrl())
+                                        .isCover(Boolean.TRUE.equals(img.getIsCover()))
+                                        .sortOrder(img.getSortOrder())
+                                        .build(),
+                                Collectors.toList()
+                        )
                 ));
 
         boolean filterByAvailability = checkIn != null && checkOut != null;

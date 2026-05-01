@@ -92,8 +92,10 @@ const AdminBookingDetail = () => {
                     <div className="lg:col-span-2 space-y-8">
 
                         {/* 1. Tổng quan đơn hàng */}
-                        <div className="bg-white rounded-[2.5rem] p-8 shadow-2xl shadow-slate-200/60 border border-white relative overflow-hidden">
-                            <div className={`absolute top-0 right-0 px-10 py-3 ${status.color} text-white font-black text-[11px] rounded-bl-[1.5rem] tracking-[0.2em] shadow-lg ${status.shadow}`}>
+                        <div
+                            className="bg-white rounded-[2.5rem] p-8 shadow-2xl shadow-slate-200/60 border border-white relative overflow-hidden">
+                            <div
+                                className={`absolute top-0 right-0 px-10 py-3 ${status.color} text-white font-black text-[11px] rounded-bl-[1.5rem] tracking-[0.2em] shadow-lg ${status.shadow}`}>
                                 {status.label}
                             </div>
 
@@ -101,26 +103,32 @@ const AdminBookingDetail = () => {
                                 {/*<span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest mb-3 inline-block">Mã hệ thống: {booking.bookingId}</span>*/}
                                 <h2 className="text-4xl font-black text-slate-900 tracking-tight">{booking.bookingCode}</h2>
                                 <p className="text-slate-400 font-bold text-xs mt-2 flex items-center gap-2">
-                                    <Clock size={14}/> Khởi tạo lúc: {new Date(booking.createdAt).toLocaleTimeString('vi-VN')} ngày {formatDate(booking.createdAt)}
+                                    <Clock size={14}/> Khởi tạo
+                                    lúc: {new Date(booking.createdAt).toLocaleTimeString('vi-VN')} ngày {formatDate(booking.createdAt)}
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
+                            <div
+                                className="grid grid-cols-2 md:grid-cols-4 gap-4 p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
                                 <div className="space-y-1">
-                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Ngày đến</p>
+                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Ngày
+                                        đến</p>
                                     <p className="font-black text-slate-800 text-lg">{formatDate(booking.checkInDate)}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Ngày đi</p>
+                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Ngày
+                                        đi</p>
                                     <p className="font-black text-slate-800 text-lg">{formatDate(booking.checkOutDate)}</p>
                                 </div>
-                                <div className="space-y-1">
-                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Thời gian</p>
+                                <div className="space-y-1 text-center border-x border-slate-200">
+                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Thời
+                                        gian</p>
                                     <p className="font-black text-blue-600 text-lg">{booking.nights} ĐÊM</p>
                                 </div>
-                                <div className="space-y-1">
-                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Số khách</p>
-                                    <p className="font-black text-slate-800 text-lg">{booking.totalGuests} NGƯỜI</p>
+                                <div className="space-y-1 text-right md:text-left">
+                                    <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Tổng
+                                        phòng</p>
+                                    <p className="font-black text-slate-800 text-lg">{booking.totalRooms} PHÒNG</p>
                                 </div>
                             </div>
                         </div>
@@ -129,44 +137,72 @@ const AdminBookingDetail = () => {
                         <div className="space-y-5">
                             <div className="flex items-center justify-between px-2">
                                 <h3 className="text-xl font-black text-slate-900 flex items-center gap-3">
-                                    <BedDouble className="text-blue-600" /> Danh sách phòng ({booking.totalRooms})
+                                    <BedDouble className="text-blue-600"/> Chi tiết loại phòng
                                 </h3>
                             </div>
                             {booking.roomDetails.map((room, idx) => (
-                                <div key={idx} className="bg-white p-8 rounded-[2.5rem] border border-white shadow-xl flex flex-col md:flex-row gap-8">
-                                    {/*<div className="w-full md:w-40 h-40 bg-slate-50 rounded-[2rem] flex items-center justify-center text-slate-200 border border-slate-100 flex-shrink-0">*/}
-                                    {/*    <Hotel size={48} />*/}
-                                    {/*</div>*/}
-                                    <div className="flex-1">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div>
-                                                <h4 className="font-black text-slate-900 text-xl tracking-tight">{room.roomTitle}</h4>
-                                                <div className="flex items-center gap-2 mt-1">
-                                                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Mã: {room.roomCode}</span>
-                                                    <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{room.bedType} Bed</span>
-                                                </div>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Đơn giá / Đêm</p>
-                                                <p className="font-black text-slate-900 text-lg">{formatVND(room.pricePerNight)}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex flex-wrap gap-2 mb-6">
-                                            <span className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-[10px] font-black border border-blue-100 uppercase tracking-tighter flex items-center gap-1">
-                                                <Users size={12}/> Tối đa {room.maxGuests} khách
-                                            </span>
-                                            {parseAmenities(room.amenities).map((amn, i) => (
-                                                <span key={i} className="px-3 py-1.5 bg-slate-50 text-slate-500 rounded-xl text-[10px] font-black border border-slate-100 uppercase tracking-tighter flex items-center gap-1">
-                                                    <CheckCircle2 size={12} className="text-emerald-500"/> {amn}
+                                <div key={idx}
+                                     className="bg-white p-8 rounded-[2.5rem] border border-white shadow-xl group">
+                                    <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <span
+                                                    className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-black">
+                                                    Số lượng: {room.quantity}
                                                 </span>
-                                            ))}
+                                                <h4 className="font-black text-slate-900 text-2xl tracking-tight leading-none">{room.roomTitle}</h4>
+                                            </div>
+
+                                            <div className="flex flex-wrap items-center gap-2 mt-3">
+                                                <span
+                                                    className="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-1 rounded border border-slate-200 uppercase tracking-widest">Mã: {room.roomCode}</span>
+                                                <span
+                                                    className="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-1 rounded border border-slate-200 uppercase tracking-widest flex items-center gap-1">
+                                                    <Maximize2 size={12}/> {room.roomArea} m²
+                                                </span>
+                                                <span
+                                                    className="text-[10px] font-black text-slate-500 bg-slate-100 px-2 py-1 rounded border border-slate-200 uppercase tracking-widest">{room.bedType}</span>
+                                            </div>
                                         </div>
 
-                                        <div className="pt-5 border-t border-slate-50 flex justify-between items-center">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase">Thành tiền phòng</p>
-                                            <p className="font-black text-slate-900 text-xl tracking-tighter">{formatVND(room.subtotalAmount)}</p>
+                                        <div
+                                            className="text-right bg-slate-50 p-4 rounded-2xl border border-slate-100 min-w-[140px]">
+                                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Đơn
+                                                giá / Đêm</p>
+                                            <p className="font-black text-blue-600 text-lg">{formatVND(room.pricePerNight)}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Tiện ích phòng */}
+                                    <div className="flex flex-wrap gap-2 mb-8">
+                                        <span
+                                            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-xl text-[10px] font-black border border-emerald-100 uppercase tracking-tighter flex items-center gap-1">
+                                            <Users
+                                                size={12}/> Tối đa {room.maxGuests} khách ({room.maxAdults}L + {room.maxChildren}N)
+                                        </span>
+                                        {parseAmenities(room.amenities).map((amn, i) => (
+                                            <span key={i}
+                                                  className="px-3 py-1.5 bg-slate-50 text-slate-500 rounded-xl text-[10px] font-black border border-slate-100 uppercase tracking-tighter flex items-center gap-1">
+                                                <CheckCircle2 size={12} className="text-blue-400"/> {amn}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    {/* Thành tiền tính riêng cho loại phòng này */}
+                                    <div
+                                        className="pt-6 border-t border-dashed border-slate-200 flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
+                                        <div className="bg-slate-50/50 px-4 py-2 rounded-xl border border-slate-100">
+                                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Tiền
+                                                phòng (1 phòng / {room.nights} đêm)</p>
+                                            <p className="font-bold text-slate-600 text-sm">{formatVND(room.subtotalAmount)}</p>
+                                        </div>
+
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-black text-slate-600 uppercase mb-1 tracking-widest">
+                                                Tổng tiền ({room.quantity} phòng)
+                                            </p>
+                                            <p className="font-black text-slate-900 text-2xl tracking-tighter">
+                                                {formatVND(room.totalAmount)}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -281,24 +317,30 @@ const AdminBookingDetail = () => {
                                 <CreditCard className="text-blue-600" size={20}/> Quyết toán doanh thu
                             </h3>
                             <div className="space-y-4">
-                                <div className="flex justify-between text-xs font-black text-slate-400 uppercase tracking-widest">
-                                    <span>Tạm tính phòng</span>
+                                <div
+                                    className="flex justify-between text-xs font-black text-slate-600 uppercase tracking-widest">
+                                    <span>Tổng tiền phòng ({booking.totalRooms} phòng)</span>
                                     <span className="text-slate-900">{formatVND(booking.totalAmount)}</span>
                                 </div>
-                                <div className="flex justify-between text-xs font-black text-slate-400 uppercase tracking-widest">
-                                    <span>Dịch vụ thêm</span>
-                                    <span className="text-slate-900">
-                                        {formatVND(booking.addonServices?.reduce((sum, s) => sum + s.totalPrice, 0) || 0)}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between text-xs font-black text-rose-500 uppercase tracking-widest">
+                                {booking.addonServices?.length > 0 && (
+                                    <div
+                                        className="flex justify-between text-xs font-black text-slate-600 uppercase tracking-widest">
+                                        <span>Dịch vụ cộng thêm</span>
+                                        <span className="text-slate-900">
+                                            + {formatVND(booking.addonServices.reduce((sum, s) => sum + s.totalPrice, 0))}
+                                        </span>
+                                    </div>
+                                )}
+                                <div
+                                    className="flex justify-between text-xs font-black text-rose-600 uppercase tracking-widest">
                                     <span>Khuyến mãi</span>
                                     <span>- {formatVND(booking.discountAmount)}</span>
                                 </div>
-                                <div className="pt-6 border-t border-slate-100">
+                                <div className="pt-6 border-t-2 border-slate-100">
                                     <div className="flex justify-between items-end">
                                         <div>
-                                            <p className="text-[10px] font-black text-slate-400 uppercase mb-1">Tổng cộng (Đã VAT)</p>
+                                            <p className="text-[10px] font-black text-slate-600 uppercase mb-1">Số tiền
+                                                thực thu</p>
                                             <p className="text-4xl font-black text-blue-600 tracking-tighter">
                                                 {formatVND(booking.finalAmount)}
                                             </p>
@@ -307,15 +349,21 @@ const AdminBookingDetail = () => {
                                 </div>
 
                                 <div className="mt-8 space-y-3">
-                                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Nguồn thu</span>
-                                        <span className="text-[11px] font-black text-slate-800 uppercase flex items-center gap-2">
+                                    <div
+                                        className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span
+                                            className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Nguồn thu</span>
+                                        <span
+                                            className="text-[11px] font-black text-slate-800 uppercase flex items-center gap-2">
                                             <ShieldCheck size={14} className="text-blue-600"/> {booking.paymentMethod}
                                         </span>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Trạng thái</span>
-                                        <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border ${booking.paymentStatus === 'PAID' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100 shadow-sm'}`}>
+                                    <div
+                                        className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <span
+                                            className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Trạng thái</span>
+                                        <span
+                                            className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border ${booking.paymentStatus === 'PAID' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100 shadow-sm'}`}>
                                             {booking.paymentStatus === 'PAID' ? 'Đã thu tiền' : 'Chưa thanh toán'}
                                         </span>
                                     </div>

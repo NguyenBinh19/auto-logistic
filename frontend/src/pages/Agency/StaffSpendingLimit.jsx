@@ -102,7 +102,7 @@ const StaffBookingAnalytics = () => {
                 {/* Dashboard Cards Section */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <StatBox
-                        label="Tổng doanh thu"
+                        label="Tổng chi tiêu"
                         value={formatVND(staffData.reduce((acc, curr) => acc + curr.totalMoneyUsage, 0))}
                         icon={<TrendingUp size={20} />}
                         color="bg-blue-600"

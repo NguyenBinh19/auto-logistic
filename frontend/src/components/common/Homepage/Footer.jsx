@@ -23,11 +23,11 @@ const Footer = () => {
                         <ul className="space-y-4 text-sm">
                             <li className="flex items-start gap-3">
                                 <MapPin className="flex-shrink-0 text-white mt-0.5" size={18} />
-                                <span>123 Đường ABC, Quận XYZ, TP.HCM</span>
+                                <span>Khu Công nghệ cao Hòa Lạc - Km29 Đại lộ Thăng Long, Xã Hòa Lạc, TP. Hà Nội</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone className="flex-shrink-0 text-white" size={18} />
-                                <span>+84 123 456 789</span>
+                                <span>(024) 7300 5588</span>
                             </li>
                         </ul>
                     </div>

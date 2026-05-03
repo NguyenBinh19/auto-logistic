@@ -567,7 +567,7 @@ public class BookingServiceImpl implements BookingService {
             TransactionHistory historyCreditMD = TransactionHistory.builder()
                     .transactionDate(LocalDateTime.now())
                     .transactionType("Payment")
-                    .description("Thanh toán booking " + "(" + saved.getBookingCode() + ")")
+                    .description("Chi trả booking bằng tín dụng " + "(" + saved.getBookingCode() + ")")
                     .sourceType("Credit")
                     .amount(finalAmountPaid)
                     .balanceAfter(creditAfter)
@@ -588,21 +588,40 @@ public class BookingServiceImpl implements BookingService {
             YearMonth currentMonth = YearMonth.from(LocalDate.now());
             String monthStr = currentMonth.toString();
 
+            // handle date for booking
+            LocalDate today = LocalDate.now();
+
+            boolean inUse;
+
+            if (today.getDayOfMonth() >= 26) {
+                inUse = true;
+            } else {
+                inUse = today.getDayOfMonth() <= 2;
+            }
+
             AgencyBooking agencyBooking = agencyBookingRepository
                     .findByAgencyIdAndMonth(agency.getAgencyId(), monthStr)
                     .orElse(AgencyBooking.builder()
                             .agencyId(agency.getAgencyId())
                             .month(monthStr)
                             .totalAmount(BigDecimal.ZERO)
+                            .principalRemaining(BigDecimal.ZERO)
+                            .penaltyInterest(BigDecimal.ZERO)
                             .createdAt(LocalDateTime.now())
                             .isPaid(false)
+                            .inUse(inUse)
                             .build());
 
             BigDecimal totalAmount = agencyBooking.getTotalAmount().add(finalAmountPaid);
 
-            agencyBooking.setTotalAmount(
-                    totalAmount
-            );
+            agencyBooking.setTotalAmount(totalAmount);
+
+            if (Boolean.TRUE.equals(inUse)
+                    && !Boolean.TRUE.equals(agencyBooking.getInUse())) {
+
+                agencyBooking.setInUse(true);
+            }
+
             agencyBooking.setPrincipalRemaining(
                     finalAmountPaid.add(agencyBooking.getPrincipalRemaining())
             );
@@ -610,6 +629,7 @@ public class BookingServiceImpl implements BookingService {
             agencyBooking.setIsPaid(false);
 
             agencyBooking.setUpdatedAt(LocalDateTime.now());
+
             agencyBookingRepository.save(agencyBooking);
         } else if ("WALLET".equalsIgnoreCase(paymentMethod)) {
 
@@ -1460,9 +1480,13 @@ public class BookingServiceImpl implements BookingService {
                 if (totalLateDays > 30) {
                     agency.setStatus("LEGAL");
                 } else if (totalWorkingDays > 15) {
-                    agency.setStatus("LOCKED");
+                    if(!(agency.getStatus().equals("LEGAL"))){
+                        agency.setStatus("LOCKED");
+                    }
                 } else {
-                    agency.setStatus("WARNING");
+                    if(!(agency.getStatus().equals("LOCKED") || agency.getStatus().equals("LEGAL"))){
+                        agency.setStatus("WARNING");
+                    }
                 }
 
                 agencyRepository.save(agency);

@@ -193,7 +193,7 @@ public class AgencyServiceImpl implements AgencyService {
         BigDecimal remainingCredit = currentCredit;
 
         List<AgencyBooking> unpaidBookings =
-                agencyBookingRepository.findByAgencyIdAndIsPaidFalse(agencyId);
+                agencyBookingRepository.findByAgencyIdAndIsPaidFalseAndInUseTrue(agencyId);
 
         BigDecimal debt = unpaidBookings.stream()
                 .map(b -> {
@@ -272,7 +272,7 @@ public class AgencyServiceImpl implements AgencyService {
         Agency agency = agencyRepository.findById(agencyId)
                 .orElseThrow(() -> new RuntimeException("Agency not found"));
 
-        List<AgencyBooking> unpaidBookings = agencyBookingRepository.findByAgencyIdAndIsPaidFalse(agencyId);
+        List<AgencyBooking> unpaidBookings = agencyBookingRepository.findByAgencyIdAndIsPaidFalseAndInUseTrue(agencyId);
 
         if (unpaidBookings.isEmpty()) {
             throw new AppException(ErrorCode.NO_DEBT_TO_PAY);
@@ -321,7 +321,7 @@ public class AgencyServiceImpl implements AgencyService {
 
             agencyBookingRepository.save(booking);
 
-            if (!agencyBookingRepository.findByAgencyIdAndIsPaidFalse(agencyId).isEmpty()) {
+            if (!agencyBookingRepository.findByAgencyIdAndIsPaidFalseAndInUseTrue(agencyId).isEmpty()) {
                 agency.setCurrentCredit(agency.getCurrentCredit() != null
                         ? agency.getCurrentCredit().add(payment)
                         : payment);

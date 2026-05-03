@@ -1,7 +1,9 @@
 package com.HTPj.htpj.service.impl;
 
+import com.HTPj.htpj.dto.request.booking.RoomAvailabilityRequest;
 import com.HTPj.htpj.dto.request.roomHold.CreateRoomHoldRequest;
 import com.HTPj.htpj.dto.request.roomHold.ExtendRoomHoldRequest;
+import com.HTPj.htpj.dto.response.booking.RoomAvailabilityResponse;
 import com.HTPj.htpj.dto.response.roomHold.RoomHoldResponse;
 import com.HTPj.htpj.entity.RoomHold;
 import com.HTPj.htpj.entity.RoomHoldDetail;
@@ -9,6 +11,7 @@ import com.HTPj.htpj.exception.AppException;
 import com.HTPj.htpj.exception.ErrorCode;
 import com.HTPj.htpj.mapper.RoomHoldMapper;
 import com.HTPj.htpj.repository.RoomHoldRepository;
+import com.HTPj.htpj.service.BookingService;
 import com.HTPj.htpj.service.RoomHoldService;
 //import com.HTPj.htpj.temporal.client.RoomHoldWorkflowClient;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +27,29 @@ public class RoomHoldServiceImpl implements RoomHoldService {
     private final RoomHoldRepository roomHoldRepository;
     private final RoomHoldMapper roomHoldMapper;
 //    private final RoomHoldWorkflowClient workflowClient;
+    private final BookingService bookingService;
 
 
     @Override
     public RoomHoldResponse createHold(CreateRoomHoldRequest req) {
+
+        RoomAvailabilityRequest avaiRequest = RoomAvailabilityRequest.builder()
+                .hotelId(req.getHotelId())
+                .checkIn(req.getCheckInDate())
+                .checkOut(req.getCheckOutDate())
+                .build();
+        List<RoomAvailabilityResponse> avaiResponses = bookingService.checkAvailability(avaiRequest);
+
+        for (var item : req.getItems()) {
+            RoomAvailabilityResponse avai = avaiResponses.stream()
+                    .filter(r -> r.getRoomTypeId().equals(item.getRoomTypeId()))
+                    .findFirst()
+                    .orElseThrow(() -> new AppException(ErrorCode.ROOM_TYPE_NOT_FOUND));
+
+            if (avai.getQuantityAvaiable() < item.getQuantity()) {
+                throw new AppException(ErrorCode.ROOM_NOT_AVAILABLE);
+            }
+        }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiredAt = now.plusMinutes(15);

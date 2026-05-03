@@ -71,6 +71,7 @@ public enum ErrorCode {
     ADDON_SERVICE_NOT_AVAILABLE(2208, "Dịch vụ thêm không còn khả dụng",HttpStatus.BAD_REQUEST),
     INSUFFICIENT_BALANCE(2206,"The account balance is insufficient to make the payment.", HttpStatus.BAD_REQUEST),
     INVALID_PAYMENT_METHOD(2207,"Invalid payment method", HttpStatus.BAD_REQUEST),
+    ROOM_NOT_AVAILABLE(2208, "One or more selected room types are not available for the chosen dates", HttpStatus.BAD_REQUEST),
 
     //voucher (UC-027)
     VOUCHER_NOT_AVAILABLE(2210, "Voucher is only available for BOOKED bookings", HttpStatus.BAD_REQUEST),

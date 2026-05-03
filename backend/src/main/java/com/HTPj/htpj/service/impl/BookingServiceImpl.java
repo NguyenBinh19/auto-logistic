@@ -1384,9 +1384,13 @@ public class BookingServiceImpl implements BookingService {
                 if (totalLateDays > 30) {
                     agency.setStatus("LEGAL");
                 } else if (totalWorkingDays > 15) {
-                    agency.setStatus("LOCKED");
+                    if(!(agency.getStatus().equals("LEGAL"))){
+                        agency.setStatus("LOCKED");
+                    }
                 } else {
-                    agency.setStatus("WARNING");
+                    if(!(agency.getStatus().equals("LOCKED") || agency.getStatus().equals("LEGAL"))){
+                        agency.setStatus("WARNING");
+                    }
                 }
 
                 agencyRepository.save(agency);

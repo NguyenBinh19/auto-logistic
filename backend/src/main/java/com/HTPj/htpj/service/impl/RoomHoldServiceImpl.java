@@ -11,11 +11,13 @@ import com.HTPj.htpj.exception.AppException;
 import com.HTPj.htpj.exception.ErrorCode;
 import com.HTPj.htpj.mapper.RoomHoldMapper;
 import com.HTPj.htpj.repository.RoomHoldRepository;
+import com.HTPj.htpj.repository.RoomTypeRepository;
 import com.HTPj.htpj.service.BookingService;
 import com.HTPj.htpj.service.RoomHoldService;
 import com.HTPj.htpj.temporal.client.RoomHoldWorkflowClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,10 +30,20 @@ public class RoomHoldServiceImpl implements RoomHoldService {
     private final RoomHoldMapper roomHoldMapper;
     private final RoomHoldWorkflowClient workflowClient;
     private final BookingService bookingService;
+    private final RoomTypeRepository roomTypeRepository;
 
 
     @Override
+    @Transactional
     public RoomHoldResponse createHold(CreateRoomHoldRequest req) {
+
+        List<Integer> roomTypeIds = req.getItems().stream()
+                .map(i -> i.getRoomTypeId())
+                .distinct()
+                .sorted()
+                .toList();
+
+        roomTypeRepository.findByIdsForUpdate(roomTypeIds);
 
         RoomAvailabilityRequest avaiRequest = RoomAvailabilityRequest.builder()
                 .hotelId(req.getHotelId())

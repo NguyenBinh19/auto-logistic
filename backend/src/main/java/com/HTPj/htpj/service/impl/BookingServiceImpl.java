@@ -170,6 +170,102 @@ public class BookingServiceImpl implements BookingService {
         return responses;
     }
 
+//    @Override
+//    public List<RoomAvailabilityResponse> checkAvailability(RoomAvailabilityRequest request) {
+//        return internalCalculateAvailability(request, false);
+//    }
+//
+//    @Override
+//    public List<RoomAvailabilityResponse> checkAvailabilityForHold(RoomAvailabilityRequest request) {
+//        return internalCalculateAvailability(request, true);
+//    }
+//
+//    private List<RoomAvailabilityResponse> internalCalculateAvailability(RoomAvailabilityRequest request, boolean shouldLock) {
+//        List<RoomType> roomTypes = roomTypeRepository.findByHotel_HotelId(request.getHotelId());
+//
+//        List<BookingDetail> bookingDetails = bookingDetailRepository.findOverlappingBookings(
+//                request.getHotelId(), request.getCheckIn(), request.getCheckOut(), List.of("BOOKED")
+//        );
+//
+//        Map<Integer, Integer> bookedQuantityMap = bookingDetails.stream()
+//                .collect(Collectors.groupingBy(
+//                        bd -> bd.getRoomType().getRoomTypeId(),
+//                        Collectors.summingInt(BookingDetail::getQuantity)
+//                ));
+//
+//        List<RoomHoldDetail> holdDetails = roomHoldRepository.findActiveOverlappingHoldDetails(
+//                request.getHotelId(), request.getCheckIn(), request.getCheckOut()
+//        );
+//
+//        Map<Integer, Integer> holdingQuantityMap = holdDetails.stream()
+//                .collect(Collectors.groupingBy(
+//                        RoomHoldDetail::getRoomTypeId,
+//                        Collectors.summingInt(RoomHoldDetail::getQuantity)
+//                ));
+//
+//        List<Integer> roomTypeIds = roomTypes.stream().map(RoomType::getRoomTypeId).toList();
+//        LocalDate allotmentEnd = request.getCheckOut().minusDays(1);
+//
+//        List<RoomAllotment> allotments;
+//        if (shouldLock) {
+//            allotments = roomAllotmentRepository.findByRoomTypeIdsAndDateRangeWithLock(
+//                    roomTypeIds, request.getCheckIn(), allotmentEnd);
+//        } else {
+//            allotments = roomAllotmentRepository.findByRoomTypeIdsAndDateRange(
+//                    roomTypeIds, request.getCheckIn(), allotmentEnd);
+//        }
+//
+//        Map<Integer, List<RoomAllotment>> allotmentMap = allotments.stream()
+//                .collect(Collectors.groupingBy(RoomAllotment::getRoomTypeId));
+//
+//        List<RoomAvailabilityResponse> responses = new ArrayList<>();
+//
+//        for (RoomType rt : roomTypes) {
+//            if (!"ACTIVE".equalsIgnoreCase(rt.getRoomStatus())) {
+//                responses.add(roomAvailabilityMapper.toInactive(rt));
+//                continue;
+//            }
+//
+//            List<RoomAllotment> rtAllotments = allotmentMap.getOrDefault(rt.getRoomTypeId(), Collections.emptyList());
+//            Map<LocalDate, RoomAllotment> rtAllotmentDateMap = rtAllotments.stream()
+//                    .collect(Collectors.toMap(RoomAllotment::getAllotmentDate, a -> a));
+//
+//            int effectiveCeiling = rt.getTotalRooms();
+//            boolean isStopSell = false;
+//
+//            for (LocalDate date = request.getCheckIn(); !date.isAfter(allotmentEnd); date = date.plusDays(1)) {
+//                RoomAllotment ra = rtAllotmentDateMap.get(date);
+//                if (ra != null) {
+//                    if (Boolean.TRUE.equals(ra.getStopSell())) {
+//                        isStopSell = true;
+//                        break;
+//                    }
+//                    effectiveCeiling = Math.min(effectiveCeiling, ra.getAllotment());
+//                }
+//            }
+//
+//            int bookedQuantity = bookedQuantityMap.getOrDefault(rt.getRoomTypeId(), 0);
+//            int holdingQuantity = holdingQuantityMap.getOrDefault(rt.getRoomTypeId(), 0);
+//
+//            int availableQuantity = isStopSell ? 0 : effectiveCeiling - bookedQuantity - holdingQuantity;
+//
+//            BigDecimal calculatedPrice = calculateTotalPrice(rt, request.getCheckIn(), request.getCheckOut());
+//
+//            if (availableQuantity <= 0) {
+//                responses.add(RoomAvailabilityResponse.builder()
+//                        .roomTypeId(rt.getRoomTypeId())
+//                        .roomTitle(rt.getRoomTitle())
+//                        .price(calculatedPrice)
+//                        .quantityAvaiable(0)
+//                        .status(isStopSell ? "stop_sell" : "sold_out")
+//                        .build());
+//            } else {
+//                responses.add(roomAvailabilityMapper.toActive(rt, availableQuantity, calculatedPrice));
+//            }
+//        }
+//        return responses;
+//    }
+
     private BigDecimal calculateTotalPrice(RoomType roomType, LocalDate checkIn, LocalDate checkOut) {
 
         BigDecimal basePrice = roomType.getBasePrice();

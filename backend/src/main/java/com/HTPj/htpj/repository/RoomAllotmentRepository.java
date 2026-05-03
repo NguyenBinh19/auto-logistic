@@ -1,7 +1,9 @@
 package com.HTPj.htpj.repository;
 
 import com.HTPj.htpj.entity.RoomAllotment;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -37,6 +39,18 @@ public interface RoomAllotmentRepository extends JpaRepository<RoomAllotment, Lo
     """)
     List<RoomAllotment> findStopSellByRoomTypeAndDateRange(
             @Param("roomTypeId") Integer roomTypeId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("""
+        SELECT ra FROM RoomAllotment ra
+        WHERE ra.roomTypeId IN :roomTypeIds
+          AND ra.allotmentDate BETWEEN :startDate AND :endDate
+        ORDER BY ra.roomTypeId, ra.allotmentDate
+    """)
+    List<RoomAllotment> findByRoomTypeIdsAndDateRangeWithLock(
+            @Param("roomTypeIds") List<Integer> roomTypeIds,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 }

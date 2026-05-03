@@ -15,6 +15,8 @@ import java.util.List;
 public interface BookingService {
     List<RoomAvailabilityResponse> checkAvailability(RoomAvailabilityRequest request);
 
+//    List<RoomAvailabilityResponse> checkAvailabilityForHold(RoomAvailabilityRequest request);
+
     CreateBookingResponse createBooking(CreateBookingRequest request);
 
     // UC-029: Xem lịch sử đặt phòng của agency user

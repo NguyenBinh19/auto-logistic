@@ -7,5 +7,5 @@ import com.HTPj.htpj.dto.response.roomHold.RoomHoldResponse;
 public interface RoomHoldService {
     RoomHoldResponse createHold(CreateRoomHoldRequest request);
     RoomHoldResponse extendHold(ExtendRoomHoldRequest request);
-
+    void cleanupExpiredRoomHolds();
 }

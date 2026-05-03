@@ -16,6 +16,8 @@ import com.HTPj.htpj.service.BookingService;
 import com.HTPj.htpj.service.RoomHoldService;
 import com.HTPj.htpj.temporal.client.RoomHoldWorkflowClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RoomHoldServiceImpl implements RoomHoldService {
 
     private final RoomHoldRepository roomHoldRepository;
@@ -127,6 +130,33 @@ public class RoomHoldServiceImpl implements RoomHoldService {
         );
 
         return roomHoldMapper.toResponse(hold);
+    }
+
+    @Override
+    @Scheduled(fixedRate = 3600000)
+    @Transactional
+    public void cleanupExpiredRoomHolds() {
+        try {
+            log.info("Starting RoomHold cleanup task...");
+
+            // Find all RoomHold records with status 'EXPIRED'
+            List<RoomHold> expiredRoomHolds = roomHoldRepository.findByStatus("EXPIRED");
+
+            if (expiredRoomHolds.isEmpty()) {
+                log.info("No expired RoomHold records found for cleanup");
+                return;
+            }
+
+            int count = expiredRoomHolds.size();
+
+            // Delete all expired RoomHold records
+            roomHoldRepository.deleteAll(expiredRoomHolds);
+
+            log.info("RoomHold cleanup completed successfully. Deleted {} record(s)", count);
+
+        } catch (Exception e) {
+            log.error("Error occurred during RoomHold cleanup task", e);
+        }
     }
 
 }

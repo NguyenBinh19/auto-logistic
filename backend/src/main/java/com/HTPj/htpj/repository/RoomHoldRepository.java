@@ -44,4 +44,6 @@ public interface RoomHoldRepository extends JpaRepository<RoomHold, Long> {
             @Param("checkIn") LocalDate checkIn,
             @Param("checkOut") LocalDate checkOut
     );
+
+    List<RoomHold> findByStatus(String status);
 }

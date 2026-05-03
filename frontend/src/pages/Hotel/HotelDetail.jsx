@@ -242,8 +242,16 @@ export default function HotelDetailPage() {
                 });
             }
         } catch (error) {
-            console.error("Lỗi đặt phòng:", error.response?.data);
-            alert(`Thông báo: ${error.response?.data?.message || "Không thể giữ phòng!"}`);
+            const errorData = error.response?.data;
+            if (errorData?.code === "ROOM_NOT_AVAILABLE" || errorData?.message?.includes("available")) {
+                alert("Rất tiếc: Một số loại phòng bạn chọn vừa mới hết hoặc không đủ số lượng khả dụng. Vui lòng kiểm tra lại!");
+            } else if (errorData?.message) {
+                alert(`Thông báo: ${errorData.message}`);
+            } else {
+                alert("Không thể thực hiện giữ phòng. Vui lòng thử lại sau!");
+            }
+
+            console.error("Lỗi đặt phòng chi tiết:", errorData);
         }
     };
 

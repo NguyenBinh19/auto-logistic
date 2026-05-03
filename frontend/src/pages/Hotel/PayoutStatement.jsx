@@ -247,7 +247,8 @@ const StatementDetailView = ({ statementId, onBack }) => {
         bankAccountHolder: "",
         bankAccountNumber: ""
     });
-
+    const [disputeDetail, setDisputeDetail] = useState(null);
+const [disputeLoading, setDisputeLoading] = useState(false);
     const fetchDetail = useCallback(async () => {
         setLoading(true);
         try {
@@ -262,7 +263,28 @@ const StatementDetailView = ({ statementId, onBack }) => {
             setLoading(false);
         }
     }, [statementId]);
+    useEffect(() => {
+    const fetchDisputeDetail = async () => {
+        if (!statement || statement.status !== "DISPUTED") {
+            setDisputeDetail(null);
+            return;
+        }
 
+        setDisputeLoading(true);
+        try {
+            const res = await payoutService.getDisputeDetail(statement.statementId);
+            if (res.code === 1000) {
+                setDisputeDetail(res.result);
+            }
+        } catch (error) {
+            console.error("Lỗi tải chi tiết khiếu nại:", error);
+        } finally {
+            setDisputeLoading(false);
+        }
+    };
+
+    fetchDisputeDetail();
+}, [statement]);
     useEffect(() => {
         if (statementId) fetchDetail();
     }, [statementId, fetchDetail]);
@@ -397,7 +419,7 @@ const StatementDetailView = ({ statementId, onBack }) => {
                     </button> */}
                 </div>
             </div>
-
+                        
             <StatementHeader
                 gross={statement.grossRevenue || 0}
                 commission={statement.totalCommission || 0}
@@ -445,7 +467,84 @@ const StatementDetailView = ({ statementId, onBack }) => {
                     )}
                 </div>
             )}
+            {statement?.status === "DISPUTED" && disputeDetail && (
+    <div className={`rounded-3xl p-5 border ${
+        disputeDetail.status === "RESOLVED"
+            ? "bg-emerald-50 border-emerald-100"
+            : "bg-amber-50 border-amber-100"
+    }`}>
+        <h3 className="text-sm font-black uppercase tracking-wider mb-3 text-slate-800">
+            {disputeDetail.status === "RESOLVED"
+                ? "Kết quả xử lý khiếu nại"
+                : "Thông tin khiếu nại"}
+        </h3>
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div className="bg-white rounded-2xl p-4 border border-slate-100">
+                <p className="text-[11px] font-bold text-slate-500 uppercase">Lý do khiếu nại</p>
+                <p className="font-bold text-slate-800 mt-1">
+                    {disputeDetail.reasonDetails || "-"}
+                </p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-4 border border-slate-100">
+                <p className="text-[11px] font-bold text-slate-500 uppercase">Trạng thái xử lý</p>
+                <p className={`font-black mt-1 ${
+                    disputeDetail.status === "RESOLVED" ? "text-emerald-600" : "text-amber-600"
+                }`}>
+                    {disputeDetail.status === "RESOLVED" ? "Đã xử lý" : "Đang chờ xử lý"}
+                </p>
+            </div>
+
+            {disputeDetail.adminReport && (
+                <div className="bg-white rounded-2xl p-4 border border-slate-100 md:col-span-2">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase">Phản hồi từ admin</p>
+                    <p className="font-bold text-slate-800 mt-1 whitespace-pre-line">
+                        {disputeDetail.adminReport}
+                    </p>
+                </div>
+            )}
+
+            {disputeDetail.resolvedAt && (
+                <div className="bg-white rounded-2xl p-4 border border-slate-100">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase">Thời gian xử lý</p>
+                    <p className="font-black text-slate-800 mt-1">
+                        {new Date(disputeDetail.resolvedAt).toLocaleString("vi-VN")}
+                    </p>
+                </div>
+            )}
+
+            {disputeDetail.resolvedBy && (
+                <div className="bg-white rounded-2xl p-4 border border-slate-100">
+                    <p className="text-[11px] font-bold text-slate-500 uppercase">Người xử lý</p>
+                    <p className="font-black text-slate-800 mt-1">
+                        {disputeDetail.resolvedBy}
+                    </p>
+                </div>
+            )}
+        </div>
+
+        {Array.isArray(disputeDetail.imageUrls) && disputeDetail.imageUrls.length > 0 && (
+            <div className="mt-4">
+                <p className="text-[11px] font-bold text-slate-500 uppercase mb-2">Minh chứng xử lý</p>
+                <div className="flex flex-wrap gap-3">
+                    {disputeDetail.imageUrls.map((url, idx) => (
+                        <a
+                            key={idx}
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-black text-blue-600"
+                        >
+                            <ExternalLink size={14} className="mr-2" />
+                            Xem ảnh {idx + 1}
+                        </a>
+                    ))}
+                </div>
+            </div>
+        )}
+    </div>
+)}
             {/* Table */}
             <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
                 <div className="p-6 border-b border-slate-50 flex justify-between items-center">

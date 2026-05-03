@@ -709,7 +709,7 @@ public class PayoutStatementServiceImpl implements PayoutStatementService {
         // update dispute
         dispute.setAdminReport(request.getAdminReport());
         dispute.setResolvedAt(LocalDateTime.now());
-        dispute.setResolvedBy(getCurrentUserId());
+        dispute.setResolvedBy(getCurrentUsername());
         dispute.setStatus("RESOLVED");
 
         disputeRepository.save(dispute);

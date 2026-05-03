@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface AgencyBookingRepository extends JpaRepository<AgencyBooking, Long> {
     Optional<AgencyBooking> findByAgencyIdAndMonth(Long agencyId, String month);
 
-    List<AgencyBooking> findByAgencyIdAndIsPaidFalse(Long agencyId);
+    List<AgencyBooking> findByAgencyIdAndIsPaidFalseAndInUseTrue(Long agencyId);
 
     @Modifying
     @Transactional
@@ -29,4 +29,13 @@ public interface AgencyBookingRepository extends JpaRepository<AgencyBooking, Lo
 """, nativeQuery = true
     )
     void updateStatusForPaidAgency();
+
+    @Modifying
+    @Transactional
+    @Query("""
+        UPDATE AgencyBooking a
+        SET a.inUse = true
+        WHERE a.inUse = false OR a.inUse IS NULL
+    """)
+    void enableInUseForUnusedRecords();
 }

@@ -55,6 +55,9 @@ public class AgencyBooking {
     @Column(name = "last_interest_calculated_date")
     private LocalDate lastInterestCalculatedDate;
 
+    @Column(name = "in_use")
+    private Boolean inUse;
+
     @Column(name = "penalty_rate", precision = 10, scale = 7)
     private BigDecimal penaltyRate;
 

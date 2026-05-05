@@ -180,6 +180,12 @@ public class VoucherServiceImpl implements VoucherService {
             footer.setAlignment(Element.ALIGN_CENTER);
             document.add(footer);
 
+            Paragraph note = new Paragraph(
+                    "Note: If the guest name on this Booking Confirmation does not match the name of the guest checking in at the hotel, the hotel reserves the right to refuse check-in.",
+                    SMALL_FONT);
+            note.setAlignment(Element.ALIGN_CENTER);
+            document.add(note);
+
             // --- CANCELLED watermark (BR-DOC-02) ---
             if (isCancelled) {
                 PdfContentByte canvas = writer.getDirectContentUnder();

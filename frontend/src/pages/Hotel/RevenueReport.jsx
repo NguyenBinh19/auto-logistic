@@ -42,6 +42,17 @@ const RevenueReport = () => {
     const [granularity, setGranularity] = useState("DAILY"); // DAILY | WEEKLY | MONTHLY
     const [dateError, setDateError] = useState("");
     const MAX_DAILY_RANGE_DAYS = 365;
+
+    const shouldShowStrategicHacks = useMemo(() => {
+        if (loading || !reportData || strategicHacks.length === 0) return false;
+        const s = new Date(startDate);
+        const e = new Date(endDate);
+        const diffTime = Math.abs(e - s);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        // Hiện khi chọn MONTHLY HOẶC khoảng cách ngày >= 28
+        return granularity === 'MONTHLY' || diffDays >= 28;
+    }, [loading, granularity, startDate, endDate, reportData, strategicHacks]);
+
     const getHotelId = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         return user?.hotelId;
@@ -263,17 +274,17 @@ const RevenueReport = () => {
                 </div>
 
                 {/* Chọn độ chia biểu đồ (Ngày/Tuần/Tháng) */}
-                <div className="flex bg-slate-100 p-1 rounded-xl">
-                    {['DAILY', 'WEEKLY', 'MONTHLY'].map((mode) => (
-                        <button
-                            key={mode}
-                            onClick={() => handleGranularityChange(mode)}
-                            className={`px-6 py-2 rounded-lg text-[10px] font-black transition-all ${granularity === mode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                        >
-                            {mode === 'DAILY' ? 'NGÀY' : mode === 'WEEKLY' ? 'TUẦN' : 'THÁNG'}
-                        </button>
-                    ))}
-                </div>
+                {/*<div className="flex bg-slate-100 p-1 rounded-xl">*/}
+                {/*    {['DAILY', 'WEEKLY', 'MONTHLY'].map((mode) => (*/}
+                {/*        <button*/}
+                {/*            key={mode}*/}
+                {/*            onClick={() => handleGranularityChange(mode)}*/}
+                {/*            className={`px-6 py-2 rounded-lg text-[10px] font-black transition-all ${granularity === mode ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}*/}
+                {/*        >*/}
+                {/*            {mode === 'DAILY' ? 'NGÀY' : mode === 'WEEKLY' ? 'TUẦN' : 'THÁNG'}*/}
+                {/*        </button>*/}
+                {/*    ))}*/}
+                {/*</div>*/}
             </div>
             {/* Message báo lỗi đồng bộ với ErrorCode của BE */}
             {dateError && (
@@ -345,7 +356,7 @@ const RevenueReport = () => {
                 {/*</div>*/}
             </div>
             {/* PHẦN GỢI Ý CHIẾN LƯỢC */}
-            {!loading && granularity === 'MONTHLY' && strategicHacks.length > 0 && (
+            {shouldShowStrategicHacks && (
                 <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
                     <div className="flex flex-wrap gap-6">
                         {strategicHacks.map((hack, index) => (
@@ -385,17 +396,37 @@ const RevenueReport = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* BIỂU ĐỒ XU HƯỚNG  */}
-                <div className="lg:col-span-2 bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl relative min-h-[500px]">
+                <div
+                    className="lg:col-span-2 bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl relative min-h-[500px]">
                     {loading && (
-                        <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-[3rem]">
-                            <RefreshCcw className="animate-spin text-blue-600" size={32} />
+                        <div
+                            className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-[3rem]">
+                            <RefreshCcw className="animate-spin text-blue-600" size={32}/>
                         </div>
                     )}
 
-                    <h3 className="text-lg font-black text-slate-800 mb-10 uppercase flex items-center gap-2">
-                        <span className="w-2 h-6 bg-blue-600 rounded-full"></span>
-                        Biến động doanh thu & Công suất
-                    </h3>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
+                        <h3 className="text-lg font-black text-slate-800 uppercase flex items-center gap-2">
+                            <span className="w-2 h-6 bg-blue-600 rounded-full"></span>
+                            Biến động doanh thu & Công suất
+                        </h3>
+
+                        <div className="flex bg-slate-100 p-1 rounded-xl self-end">
+                            {['DAILY', 'WEEKLY', 'MONTHLY'].map((mode) => (
+                                <button
+                                    key={mode}
+                                    onClick={() => handleGranularityChange(mode)}
+                                    className={`px-4 py-1.5 rounded-lg text-[9px] font-black transition-all ${
+                                        granularity === mode
+                                            ? 'bg-white text-blue-600 shadow-sm'
+                                            : 'text-slate-400 hover:text-slate-600'
+                                    }`}
+                                >
+                                    {mode === 'DAILY' ? 'NGÀY' : mode === 'WEEKLY' ? 'TUẦN' : 'THÁNG'}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
                     <div className="h-[380px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -407,22 +438,32 @@ const RevenueReport = () => {
                                         <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis dataKey="period" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 700}} dy={10} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9"/>
+                                <XAxis dataKey="period" axisLine={false} tickLine={false}
+                                       tick={{fill: '#94a3b8', fontSize: 10, fontWeight: 700}} dy={10}/>
 
                                 {/* YAxis bên trái cho Doanh thu (Triệu VNĐ) */}
-                                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 10}} tickFormatter={(v) => `${(v/1000000).toFixed(0)}M`} />
+                                <YAxis yAxisId="left" axisLine={false} tickLine={false}
+                                       tick={{fill: '#94a3b8', fontSize: 10}}
+                                       tickFormatter={(v) => `${(v / 1000000).toFixed(0)}M`}/>
 
                                 {/* YAxis bên phải cho Công suất (%) */}
-                                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{fill: '#10b981', fontSize: 10}} unit="%" />
+                                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false}
+                                       tick={{fill: '#10b981', fontSize: 10}} unit="%"/>
 
-                                <Tooltip contentStyle={{borderRadius: '20px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}} />
+                                <Tooltip contentStyle={{
+                                    borderRadius: '20px',
+                                    border: 'none',
+                                    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'
+                                }}/>
 
                                 {/* Đường Doanh thu (Area) */}
-                                <Area yAxisId="left" type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={3} fill="url(#colorRev)" />
+                                <Area yAxisId="left" type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={3}
+                                      fill="url(#colorRev)"/>
 
                                 {/* Đường Công suất (Dạng nét đứt) */}
-                                <Area yAxisId="right" type="monotone" dataKey="occupancyRate" stroke="#10b981" strokeWidth={2} fill="transparent" strokeDasharray="5 5" />
+                                <Area yAxisId="right" type="monotone" dataKey="occupancyRate" stroke="#10b981"
+                                      strokeWidth={2} fill="transparent" strokeDasharray="5 5"/>
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
@@ -431,13 +472,14 @@ const RevenueReport = () => {
                 {/* THỐNG KÊ THEO LOẠI PHÒNG  */}
                 <div className="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-xl">
                     <h3 className="text-lg font-black text-slate-800 mb-8 uppercase flex items-center gap-2">
-                        <Home size={20} className="text-blue-600" /> Phân tích loại phòng
+                        <Home size={20} className="text-blue-600"/> Phân tích loại phòng
                     </h3>
                     <div className="space-y-6 overflow-y-auto max-h-[400px] pr-2 custom-scrollbar">
                         {roomTypeStats.length > 0 ? roomTypeStats.map((item, idx) => (
                             <div key={idx} className="p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors">
                                 <div className="flex justify-between items-start mb-2">
-                                    <span className="text-[11px] font-black text-slate-550 uppercase leading-tight w-2/3">
+                                    <span
+                                        className="text-[11px] font-black text-slate-550 uppercase leading-tight w-2/3">
                                         {item.roomTypeName}
                                     </span>
                                     <span className="text-sm font-black text-blue-600">{item.contribution}%</span>

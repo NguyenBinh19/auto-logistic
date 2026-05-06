@@ -108,11 +108,15 @@ export default function HotelSearchContainer() {
             const matchStar =
                 filters.stars.length === 0 ||
                 filters.stars.includes(Math.floor(Number(hotel.avgRating || 0)));
-
             // Lọc Tiện ích
-            const matchAmenities = filters.amenities.length === 0 || filters.amenities.every(a =>
-                hotel.amenities && hotel.amenities.includes(a)
-            );
+            const hotelAmenities = (hotel.amenities || [])
+                .filter(Boolean)
+                .map(a => String(a).toLowerCase().trim());
+            const matchAmenities = filters.amenities.length === 0 ||
+                filters.amenities.every(selectedA => {
+                    const searchKeyword = selectedA.toLowerCase().trim();
+                    return hotelAmenities.some(hA => hA.includes(searchKeyword));
+                });
 
             return matchStar && matchAmenities;
         });

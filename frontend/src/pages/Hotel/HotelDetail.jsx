@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { format, addDays, parseISO, differenceInSeconds, isBefore, isAfter } from "date-fns";
 import {
@@ -65,6 +65,11 @@ const BookingTimerModal = ({ expiredAt, onExpire, onExtend, isExtending }) => {
 
 // --- 2. MAIN COMPONENT ---
 export default function HotelDetailPage() {
+    const [searchParams] = useSearchParams();
+    const [dates, setDates] = useState({
+        checkIn: searchParams.get("checkIn") || format(new Date(), 'yyyy-MM-dd'),
+        checkOut: searchParams.get("checkOut") || format(addDays(new Date(), 1), 'yyyy-MM-dd')
+    });
     const { id } = useParams();
     const navigate = useNavigate();
     const [openGallery, setOpenGallery] = useState(false);
@@ -75,10 +80,10 @@ export default function HotelDetailPage() {
     // Lấy ngày hiện tại theo định dạng YYYY-MM-DD
     const todayStr = new Date().toISOString().split("T")[0];
 
-    const [dates, setDates] = useState({
-        checkIn: format(new Date(), 'yyyy-MM-dd'),
-        checkOut: format(addDays(new Date(), 1), 'yyyy-MM-dd')
-    });
+    // const [dates, setDates] = useState({
+    //     checkIn: format(new Date(), 'yyyy-MM-dd'),
+    //     checkOut: format(addDays(new Date(), 1), 'yyyy-MM-dd')
+    // });
     const [tempDates, setTempDates] = useState({ ...dates });
 
     const [selectedRooms, setSelectedRooms] = useState([]);
@@ -439,33 +444,48 @@ export default function HotelDetailPage() {
                         {/* INFO AREA */}
                         <div className="p-10">
                             <div className="flex items-center gap-2 mb-2">
-                                <div className="flex text-yellow-400">
-                                    {[1, 2, 3, 4, 5].map(i => (
-                                        <Star key={i} size={16} fill="currentColor" />
-                                    ))}
+                                <div className="flex">
+                                    {[1, 2, 3, 4, 5].map((starIndex) => {
+                                        const rating = Number(hotel.avgRating || 0);
+                                        const isFilled = starIndex <= Math.round(rating);
+                                        return (
+                                            <Star
+                                                key={starIndex}
+                                                size={16}
+                                                fill={isFilled ? "#facc15" : "none"}
+                                                className={isFilled ? "text-yellow-400" : "text-slate-200"}
+                                            />
+                                        );
+                                    })}
                                 </div>
-                                <span className="text-slate-500 text-sm font-bold">{hotel.avgRating}/5</span>
+                                <span className="text-slate-500 text-sm font-bold">
+                                    {hotel.avgRating ? `${hotel.avgRating}/5` : "Chưa có đánh giá"}
+                                </span>
                             </div>
 
-                            <h1 className="text-3xl font-black text-slate-900 mb-2">
+                            <h1 className="text-3xl font-black text-slate-900 mb-2 uppercase tracking-tight">
                                 {hotel.hotelName}
                             </h1>
 
-                            <div className="flex items-center justify-between gap-2 mb-6">
-                                <div className="flex items-center gap-2 text-blue-600 font-bold text-sm">
-                                    <MapPin size={18} />
-                                    <span>{hotel.address}</span>
+                            <div className="flex items-center justify-between gap-4 mb-6">
+                                <div className="flex items-start gap-2 text-blue-600 font-bold text-sm">
+                                    <MapPin size={18} className="shrink-0 mt-0.5"/>
+                                    <span className="leading-relaxed">{hotel.address}</span>
                                 </div>
                             </div>
 
-                            <div className="flex flex-wrap gap-4 pt-6 border-t border-slate-100">
-                                <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-bold italic">
-                                    Wifi miễn phí
-                                </span>
-                                <span className="bg-orange-50 text-orange-600 px-3 py-1 rounded-full text-xs font-bold italic">
-                                    Có bữa sáng
-                                </span>
-                            </div>
+                            {hotel.amenities && hotel.amenities.length > 0 && (
+                                <div className="flex flex-wrap gap-2 pt-6 border-t border-slate-100">
+                                    {hotel.amenities.map((amenity, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase border border-slate-100 tracking-wide"
+                                        >
+                                            {amenity}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </section>
                     {openGallery && (
@@ -474,9 +494,12 @@ export default function HotelDetailPage() {
                             onClose={() => setOpenGallery(false)}
                         />
                     )}
-                    {isAgency && (<div className="bg-white p-6 mb-10 rounded-2xl shadow-xl border border-slate-100 flex items-end gap-6 sticky top-20 z-40">
+                    {isAgency && (<div
+                        className="bg-white p-6 mb-10 rounded-2xl shadow-xl border border-slate-100 flex items-end gap-6 sticky top-20 z-40">
                         <div className="flex-1 space-y-2">
-                            <label className="text-[11px] font-black text-slate-700 uppercase tracking-widest flex items-center gap-2"><CalendarIcon size={14} className="text-blue-600" /> Nhận phòng</label>
+                            <label
+                                className="text-[11px] font-black text-slate-700 uppercase tracking-widest flex items-center gap-2"><CalendarIcon
+                                size={14} className="text-blue-600" /> Nhận phòng</label>
                             <input type="date" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-black text-slate-700" value={tempDates.checkIn} min={todayStr} onChange={(e) => setTempDates({ ...tempDates, checkIn: e.target.value })} />
                         </div>
                         <div className="flex-1 space-y-2">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useMemo } from 'react';
 import {
     BarChart3, Download, Calendar, Filter,
     RefreshCcw, ArrowRight, Home, AlertCircle

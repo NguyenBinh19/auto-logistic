@@ -443,7 +443,21 @@ export default function HotelDetailPage() {
 
                         {/* INFO AREA */}
                         <div className="p-10">
+                            
+                            <h1 className="text-3xl font-black text-slate-900 mb-2 uppercase tracking-tight">
+                                {hotel.hotelName}
+                            </h1>
+                            
+                            <div className="flex items-center justify-between gap-4 mb-6">
+                                <div className="flex items-start gap-2 text-blue-600 font-bold text-sm">
+                                    <MapPin size={18} className="shrink-0 mt-0.5"/>
+                                    <span className="leading-relaxed">{hotel.address}</span>
+                                </div>
+                            </div>
                             <div className="flex items-center gap-2 mb-2">
+                                <span className="text-slate-500 text-sm font-bold">
+                                    {hotel.avgRating ? `Đánh giá: ${hotel.avgRating}/5` : "Chưa có đánh giá"}
+                                </span>
                                 <div className="flex">
                                     {[1, 2, 3, 4, 5].map((starIndex) => {
                                         const rating = Number(hotel.avgRating || 0);
@@ -458,34 +472,27 @@ export default function HotelDetailPage() {
                                         );
                                     })}
                                 </div>
-                                <span className="text-slate-500 text-sm font-bold">
-                                    {hotel.avgRating ? `${hotel.avgRating}/5` : "Chưa có đánh giá"}
-                                </span>
+                                
                             </div>
-
-                            <h1 className="text-3xl font-black text-slate-900 mb-2 uppercase tracking-tight">
-                                {hotel.hotelName}
-                            </h1>
-
-                            <div className="flex items-center justify-between gap-4 mb-6">
-                                <div className="flex items-start gap-2 text-blue-600 font-bold text-sm">
-                                    <MapPin size={18} className="shrink-0 mt-0.5"/>
-                                    <span className="leading-relaxed">{hotel.address}</span>
-                                </div>
-                            </div>
-
+                                    <div>
+                              <span className="text-slate-500 text-sm font-bold">
+                                    {hotel.amenities ? `Tiện ích:` : ""}
+                                </span>          
                             {hotel.amenities && hotel.amenities.length > 0 && (
-                                <div className="flex flex-wrap gap-2 pt-6 border-t border-slate-100">
+                                
+                                <div className="flex flex-wrap gap-2 pt-1 border-t border-slate-100">
+                                    
                                     {hotel.amenities.map((amenity, index) => (
                                         <span
                                             key={index}
-                                            className="bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg text-[11px] font-black uppercase border border-slate-100 tracking-wide"
+                                            className="bg-slate-50 text-slate-600  py-1.5 rounded-lg text-[11px] font-black uppercase border border-slate-100 tracking-wide"
                                         >
                                             {amenity}
                                         </span>
                                     ))}
                                 </div>
                             )}
+                            </div>
                         </div>
                     </section>
                     {openGallery && (

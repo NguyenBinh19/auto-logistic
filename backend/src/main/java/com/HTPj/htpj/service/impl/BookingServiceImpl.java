@@ -33,10 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -564,8 +561,10 @@ public class BookingServiceImpl implements BookingService {
                     .build();
             agencyCreditHistoryRepository.save(history);
 
+            ZoneId vietnamZone = ZoneId.of("Asia/Ho_Chi_Minh");
+
             TransactionHistory historyCreditMD = TransactionHistory.builder()
-                    .transactionDate(LocalDateTime.now())
+                    .transactionDate(LocalDateTime.now(vietnamZone))
                     .transactionType("Payment")
                     .description("Chi trả booking bằng tín dụng " + "(" + saved.getBookingCode() + ")")
                     .sourceType("Credit")
@@ -575,8 +574,9 @@ public class BookingServiceImpl implements BookingService {
                     .transactionCode("")
                     .direction("OUT")
                     .agency(agency)
-                    .createdAt(LocalDateTime.now())
+                    .createdAt(LocalDateTime.now(vietnamZone))
                     .build();
+
             historyCreditMD = transactionHistoryRepository.save(historyCreditMD);
             historyCreditMD.setTransactionCode(String.format("TRK-%06d", historyCreditMD.getId()));
             transactionHistoryRepository.save(historyCreditMD);
@@ -639,8 +639,10 @@ public class BookingServiceImpl implements BookingService {
             agency.setWalletBalance(walletAfter);
             agencyRepository.save(agency);
 
+            ZoneId vietnamZone = ZoneId.of("Asia/Ho_Chi_Minh");
+
             TransactionHistory history = TransactionHistory.builder()
-                    .transactionDate(LocalDateTime.now())
+                    .transactionDate(LocalDateTime.now(vietnamZone))
                     .transactionType("Payment")
                     .description("Thanh toán booking " + "(" + saved.getBookingCode() + ")")
                     .sourceType("Wallet")

@@ -223,15 +223,15 @@ public class AgencyServiceImpl implements AgencyService {
         Integer lateDays = 0;
         Integer lateWorkingDays = 0;
         BigDecimal penaltyRate = BigDecimal.ZERO;
-        BigDecimal penaltyAmount = BigDecimal.ZERO;
+        BigDecimal penaltyAmount = unpaidBookings.stream()
+                .map(b -> b.getPenaltyInterest() != null ? b.getPenaltyInterest() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         String status = "NORMAL";
 
         if (worstBooking != null) {
-
             lateDays = worstBooking.getLateDays() != null ? worstBooking.getLateDays() : 0;
             lateWorkingDays = worstBooking.getLateWorkingDays() != null ? worstBooking.getLateWorkingDays() : 0;
             penaltyRate = worstBooking.getPenaltyRate() != null ? worstBooking.getPenaltyRate() : BigDecimal.ZERO;
-            penaltyAmount = worstBooking.getPenaltyInterest() != null ? worstBooking.getPenaltyInterest() : BigDecimal.ZERO;
 
             if (lateDays > 30) {
                 status = "LEGAL";

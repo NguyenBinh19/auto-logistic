@@ -1180,8 +1180,10 @@ public class BookingServiceImpl implements BookingService {
                 agencyCreditHistoryRepository.save(history);
 
                 // Save credit refund transaction history
+                ZoneId vietnamZone = ZoneId.of("Asia/Ho_Chi_Minh");
+
                 TransactionHistory txHistory = TransactionHistory.builder()
-                        .transactionDate(LocalDateTime.now())
+                        .transactionDate(LocalDateTime.now(vietnamZone))
                         .transactionType("Refund")
                         .description("Hoàn tiền hủy đơn " + "(" + booking.getBookingCode() + ")")
                         .sourceType("Credit")
@@ -1191,7 +1193,7 @@ public class BookingServiceImpl implements BookingService {
                         .transactionCode("")
                         .direction("IN")
                         .agency(agency)
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(LocalDateTime.now(vietnamZone))
                         .build();
                 txHistory = transactionHistoryRepository.save(txHistory);
                 txHistory.setTransactionCode(String.format("TRK-%06d", txHistory.getId()));
@@ -1209,8 +1211,10 @@ public class BookingServiceImpl implements BookingService {
                 agencyRepository.save(agency);
 
                 // Save wallet refund transaction history
+                ZoneId vietnamZone = ZoneId.of("Asia/Ho_Chi_Minh");
+
                 TransactionHistory txHistory = TransactionHistory.builder()
-                        .transactionDate(LocalDateTime.now())
+                        .transactionDate(LocalDateTime.now(vietnamZone))
                         .transactionType("Refund")
                         .description("Hoàn tiền hủy đơn " + "(" + booking.getBookingCode() + ")")
                         .sourceType("Wallet")
@@ -1220,7 +1224,7 @@ public class BookingServiceImpl implements BookingService {
                         .transactionCode("")
                         .direction("IN")
                         .agency(agency)
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(LocalDateTime.now(vietnamZone))
                         .build();
                 txHistory = transactionHistoryRepository.save(txHistory);
                 txHistory.setTransactionCode(String.format("TRK-%06d", txHistory.getId()));

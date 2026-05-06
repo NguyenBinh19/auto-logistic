@@ -62,13 +62,29 @@ const coverImg = coverImage?.url || DEFAULT_HOTEL_IMAGE;
         ? hotel.avgRating.toFixed(1)
         : "Chưa có";
 
+    // const handleViewDetail = (e) => {
+    //     if (e) e.stopPropagation();
+    //     const userRole = getRoleFromToken();
+    //     if (userRole === "HOTEL") {
+    //         navigate(`/hotel/list-hotel/hotels/${hotel.hotelId}`);
+    //     } else {
+    //         navigate(`/agency/search-hotel/hotels/${hotel.hotelId}`);
+    //     }
+    // };
+
     const handleViewDetail = (e) => {
         if (e) e.stopPropagation();
+        // 1. Lấy tất cả params hiện tại trên trình duyệt (checkIn, checkOut, adults, rooms...)
+        const currentParams = new URLSearchParams(window.location.search);
+        const queryString = currentParams.toString();
+
         const userRole = getRoleFromToken();
+
+        // 2. Nối thêm query string vào link điều hướng
         if (userRole === "HOTEL") {
-            navigate(`/hotel/list-hotel/hotels/${hotel.hotelId}`);
+            navigate(`/hotel/list-hotel/hotels/${hotel.hotelId}${queryString ? `?${queryString}` : ""}`);
         } else {
-            navigate(`/agency/search-hotel/hotels/${hotel.hotelId}`);
+            navigate(`/agency/search-hotel/hotels/${hotel.hotelId}${queryString ? `?${queryString}` : ""}`);
         }
     };
 

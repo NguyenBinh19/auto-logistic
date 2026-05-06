@@ -15,8 +15,11 @@ export default function FilterSidebar({ onApplyFilter }) {
 
     // Xử lý chọn tiện ích
     const handleAmenityToggle = (value) => {
+        const normalizedValue = value.toLowerCase(); // Chuẩn hóa
         setSelectedAmenities(prev =>
-            prev.includes(value) ? prev.filter(a => a !== value) : [...prev, value]
+            prev.includes(normalizedValue)
+                ? prev.filter(a => a !== normalizedValue)
+                : [...prev, normalizedValue]
         );
     };
 
@@ -70,14 +73,14 @@ export default function FilterSidebar({ onApplyFilter }) {
                     <FilterItem
                         label="Wifi miễn phí"
                         icon={<Wifi size={14} className="text-blue-400" />}
-                        isChecked={selectedAmenities.includes("Wifi miễn phí")}
-                        onChange={() => handleAmenityToggle("Wifi miễn phí")}
+                        isChecked={selectedAmenities.includes("wifi")}
+                        onChange={() => handleAmenityToggle("wifi")}
                     />
-                    <FilterItem label="Hồ bơi" icon={<Waves size={14} className="text-blue-400" />} isChecked={selectedAmenities.includes("Swimming Pool")} onChange={() => handleAmenityToggle("Swimming Pool")} />
-                    <FilterItem label="Bãi biển riêng" icon={<Palmtree size={14} className="text-orange-400" />} isChecked={selectedAmenities.includes("Beach Front")} onChange={() => handleAmenityToggle("Beach Front")} />
-                    <FilterItem label="Spa & Thư giãn" icon={<Briefcase size={14} className="text-pink-400" />} isChecked={selectedAmenities.includes("Spa")} onChange={() => handleAmenityToggle("Spa")} />
-                    <FilterItem label="Nhà hàng" icon={<UtensilsCrossed size={14} className="text-orange-500" />} isChecked={selectedAmenities.includes("Restaurant")} onChange={() => handleAmenityToggle("Restaurant")} />
-                    <FilterItem label="Phòng Gym" icon={<Briefcase size={14} className="text-slate-500" />} isChecked={selectedAmenities.includes("Gym")} onChange={() => handleAmenityToggle("Gym")} />
+                    <FilterItem label="Hồ bơi" icon={<Waves size={14} className="text-blue-400" />} isChecked={selectedAmenities.includes("hồ bơi")} onChange={() => handleAmenityToggle("hồ bơi")} />
+                    <FilterItem label="Bãi biển riêng" icon={<Palmtree size={14} className="text-orange-400" />} isChecked={selectedAmenities.includes("bãi biển riêng")} onChange={() => handleAmenityToggle("bãi biển riêng")} />
+                    <FilterItem label="Spa & Thư giãn" icon={<Briefcase size={14} className="text-pink-400" />} isChecked={selectedAmenities.includes("spa")} onChange={() => handleAmenityToggle("spa")} />
+                    <FilterItem label="Nhà hàng" icon={<UtensilsCrossed size={14} className="text-orange-500" />} isChecked={selectedAmenities.includes("nhà hàng")} onChange={() => handleAmenityToggle("nhà hàng")} />
+                    <FilterItem label="Phòng Gym" icon={<Briefcase size={14} className="text-slate-500" />} isChecked={selectedAmenities.includes("gym")} onChange={() => handleAmenityToggle("gym")} />
                 </div>
             </div>
 
